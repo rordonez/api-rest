@@ -21,6 +21,7 @@
     <modules>
         <module>api-services</module>
         <module>api-definition</module>
+        <module>api-web</module>
     </modules>
 
     <developers>
