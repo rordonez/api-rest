@@ -20,6 +20,7 @@
 
     <modules>
         <module>api-services</module>
+        <module>api-definition</module>
     </modules>
 
     <developers>
