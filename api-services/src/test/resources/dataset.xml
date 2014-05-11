@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <profesor id="1" dni="32658329G" nombre="Pepe" apellidos="Montoro Casas" titulacion="ING SUPERIOR" empresa="" cargo="" direccionEmpresa="" telefono="678356436" email="montoro@uma.es"/>
+  <profesor id="2" dni="34678346I" nombre="Ra&#250;l" apellidos="Sanchez Mandado" titulacion="Master en Comunicaciones" telefono="678456382" email="raul@gmail.com"/>
+  <profesor id="3" dni="78943278U" nombre="Jaime" apellidos="Hurtado Molina" titulacion="ING SISTEMAS" empresa="" cargo="" direccionEmpresa="" telefono="675234987" email="hmolina@uma.es"/>
+  <pfc id="1" nombre="Tecnolog&#237;as de la Innovaci&#243;n" departamento="Lenguajes y Ciencias de la Computaci&#243;n" fechaInicio="2001-09-23" estado="FINALIZADO"/>
+  <pfc id="2" nombre="Genoma Humano" departamento="Matem&#225;tica aplicada" fechaInicio="2004-09-23" estado="SIN_ASIGNAR"/>
+  <pfc id="3" nombre="Calculadora cient&#237;fica" departamento="Arquitectura de Computadores" fechaInicio="2013-07-29" estado="PENDIENTE_ANTEPROYECTO"/>
+  <pfc id="4" nombre="Manejo de taxonom&#237;as financieras" departamento="Matem&#225;tica aplicada" fechaInicio="2012-06-12" estado="EMPEZADO"/>
+  <pfc id="5" nombre="Rest Api" departamento="Lenguajes y Ciencias de la Computaci&#243;n" fechaInicio="2013-07-01" estado="EMPEZADO"/>
+  <pfcs_profesores pfc_id="1" profesor_id="1"/>
+  <pfcs_profesores pfc_id="5" profesor_id="1"/>
+  <pfcs_profesores pfc_id="2" profesor_id="2"/>
+  <pfcs_profesores pfc_id="3" profesor_id="2"/>
+  <pfcs_profesores pfc_id="4" profesor_id="2"/>
+  <pfcs_profesores pfc_id="5" profesor_id="2"/>
+  <alumno id="1" dni="00000000A" pfc="5" nombre="Rafa" apellidos="ssdag" titulacion="SISTEMAS" domicilio="sdagasg" localidad="sdagf" pais="sdag" codigoPostal="12342" telefono="325323" email="adsgadsg" fechaNacimiento="2014-01-29"/>
+  <alumno id="2" dni="34638749J" pfc="2" nombre="Silvia" apellidos="Cantos Rodr&#237;guez" titulacion="GESTION" domicilio="Plaza de la Constituci&#243;n, 25" localidad="M&#225;laga" pais="Espa&#241;a" codigoPostal="35633" telefono="678345789" email="E@e.es" fechaNacimiento="1978-02-04"/>
+  <alumno id="3" dni="34789345O" pfc="3" nombre="Alvaro" apellidos="P&#233;rez Rodr&#237;guez" titulacion="SUPERIOR" domicilio="Gran v&#237;a, 353" localidad="Madrid" pais="Espa&#241;a" codigoPostal="34789" telefono="678343234" email="edt@fsgh.es" fechaNacimiento="1985-04-22"/>
+  <alumno id="4" dni="36473824I" pfc="4" nombre="M&#243;nica" apellidos="Gutierrez Castello" titulacion="GESTION" domicilio="Avenida de Manoteras, 34" localidad="Madrid" pais="Espa&#241;a" codigoPostal="34532" telefono="678678678" email="esdg@df.com" fechaNacimiento="1988-08-14"/>
+  <alumno id="5" dni="23423423U" pfc="4" nombre="Iv&#225;n" apellidos="Ramirez Ramirez" titulacion="SUPERIOR" domicilio="Calle de Santaluc&#237;a, S/N" localidad="Oviedo" pais="Espa&#241;a" codigoPostal="34532" telefono="678980839" email="ewavg@sg.es" fechaNacimiento="1987-02-02"/>
+  <alumno id="6" dni="73894276N" pfc="1" nombre="Antonio" apellidos="P&#233;rez Martinez" titulacion="SUPERIOR" domicilio="Calle Benito P&#233;rez Galdos, 2" localidad="M&#225;laga" pais="Espa&#241;a" codigoPostal="34532" telefono="648732345" email="example@e.com" fechaNacimiento="1980-01-21"/>
+  <alumno id="7" dni="sadg" nombre="sdaf" apellidos="sadb aw" titulacion="SISTEMAS" domicilio="sdag" localidad="sdgdsb" pais="sdag" codigoPostal="23532" telefono="3463426" email="asdg" fechaNacimiento="2014-01-29"/>
+</dataset>

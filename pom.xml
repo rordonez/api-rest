@@ -18,6 +18,10 @@
         <spring.version>3.2.7.RELEASE</spring.version>
     </properties>
 
+    <modules>
+        <module>api-services</module>
+    </modules>
+
     <developers>
         <developer>
             <id>rafael.ordonez</id>
