@@ -19,24 +19,12 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
             <version>0.6.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>0.10.8</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.knappsack</groupId>-->
-            <!--<artifactId>swagger4spring-web</artifactId>-->
-            <!--<version>0.3.1</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>
