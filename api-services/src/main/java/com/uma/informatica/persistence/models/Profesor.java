@@ -2,6 +2,7 @@ package com.uma.informatica.persistence.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -23,8 +24,9 @@ public class Profesor {
     @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
 
-    @Column(name = "titulacion", nullable = false ,length = 80)
-    private String titulacion;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "titulacion", nullable = false, length = TitulacionEnum.MAX_LONGITUD_TITULACION)
+    private TitulacionEnum titulacion;
 
     @Column(name = "empresa", length = 80)
     private String empresa;
@@ -47,7 +49,7 @@ public class Profesor {
 
     public Profesor() {}
 
-    public Profesor(String dni, String nombre, String apellidos, String titulacion, String telefono, String email) {
+    public Profesor(String dni, String nombre, String apellidos, TitulacionEnum titulacion, String telefono, String email) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -88,11 +90,11 @@ public class Profesor {
         this.apellidos = apellidos;
     }
 
-    public String getTitulacion() {
+    public TitulacionEnum getTitulacion() {
         return titulacion;
     }
 
-    public void setTitulacion(String titulacion) {
+    public void setTitulacion(TitulacionEnum titulacion) {
         this.titulacion = titulacion;
     }
 

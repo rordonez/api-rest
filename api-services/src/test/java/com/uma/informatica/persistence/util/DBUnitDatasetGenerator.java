@@ -1,7 +1,7 @@
 package com.uma.informatica.persistence.util;
 
 import com.uma.informatica.persistence.configuration.ProductionDataSourceConfiguration;
-import com.uma.informatica.persistence.configuration.ServiceConfiguration;
+import com.uma.informatica.persistence.configuration.ServiceContext;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
@@ -22,7 +22,7 @@ import java.io.OutputStream;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ServiceConfiguration.class, ProductionDataSourceConfiguration.class})
+@ContextConfiguration(classes = {ServiceContext.class, ProductionDataSourceConfiguration.class})
 @ActiveProfiles("production")
 public class DBUnitDatasetGenerator {
 
@@ -39,7 +39,7 @@ public class DBUnitDatasetGenerator {
         queryDataSet.addTable("pfcs_profesores");
         queryDataSet.addTable("alumno");
 
-        OutputStream outputStream = new FileOutputStream(new File(ServiceConfiguration.RESTAPI_STORAGE_DIRECTORY, "dataset.xml"));
+        OutputStream outputStream = new FileOutputStream(new File(ServiceContext.RESTAPI_STORAGE_DIRECTORY, "dataset.xml"));
 
         FlatXmlDataSet.write(queryDataSet, outputStream);
 

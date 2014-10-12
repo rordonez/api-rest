@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface AlumnoService {
 
-    List<Alumno> findByPfc(Long pfcId);
+    List<Alumno> findByPfc(long pfcId);
 
-    Alumno findById(Long id) throws AlumnoNoEncontradoException;
+    Alumno findById(long alumnoId) throws AlumnoNoEncontradoException;
 
     Alumno findByDni(String dni);
 
@@ -25,15 +25,11 @@ public interface AlumnoService {
 
     Alumno createAlumno(String dni, String nombre, String apellidos, String titulacion, String domicilio, String localidad, String pais, String codigoPostal, String telefono, String email, Date fechaNacimiento);
 
-    Alumno deleteAlumno(Long alumnId);
+    Alumno deleteAlumno(long alumnId);
 
-    Alumno updateDireccion(Long id, String domicilio, String localidad, String pais, String codigoPostal);
+    Alumno updateDireccion(long id, String domicilio, String localidad, String pais, String codigoPostal);
 
-    Alumno updateEmail(Long id, String email);
+    Alumno updateEmail(long id, String email);
 
-    Alumno updateTelefono(Long id, String telefono);
-
-    Alumno addPfc(Long id, Long pfcId);
-
-    Alumno deletePfc(Long id);
+    Alumno updateTelefono(long id, String telefono);
 }

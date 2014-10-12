@@ -1,5 +1,6 @@
 package com.uma.informatica.controllers;
 
+import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
 import org.springframework.http.MediaType;
@@ -32,7 +33,8 @@ public class ProfesorControllerRest implements ProfesorController {
     }
 
     @Override
-    public Profesor getProfesor(@PathVariable Long profesorId) {
+    public Profesor getProfesor(@PathVariable long profesorId) {
+
         return this.profesorService.findById(profesorId);
     }
 
@@ -42,7 +44,56 @@ public class ProfesorControllerRest implements ProfesorController {
     }
 
     @Override
-    public Profesor removeProfesor(@PathVariable Long profesorId) {
+    public Profesor removeProfesor(@PathVariable long profesorId) {
         return this.profesorService.deleteProfesor(profesorId);
+    }
+
+    @Override
+    public List<Profesor> searchProfesores(@RequestParam String nombre, @RequestParam String apellidos, @RequestParam String email) {
+        List<Profesor> profesorList = new ArrayList<>();
+        if (nombre != null && apellidos != null) {
+            profesorList.addAll(profesorService.findByNombreYApellidos(nombre, apellidos));
+        }
+        else {
+            if (email != null) {
+                profesorList.add(profesorService.findByEmail(email));
+            }
+        }
+        return profesorList;
+    }
+
+    @Override
+    public Profesor updateEmpresa(@PathVariable long profesorId, @RequestParam String empresa) {
+        return profesorService.updateEmpresa(profesorId, empresa);
+    }
+
+    @Override
+    public Profesor addEmpresa(@PathVariable long profesorId, @RequestParam String empresa) {
+        return profesorService.addEmpresa(profesorId, empresa);
+    }
+
+    @Override
+    public Profesor updateTelefono(@PathVariable long profesorId, @RequestParam String telefono) {
+        return profesorService.updateTelefono(profesorId, telefono);
+    }
+
+    @Override
+    public Profesor addTelefono(@PathVariable long profesorId, @RequestParam String telefono) {
+        return profesorService.addTelefono(profesorId, telefono);
+    }
+
+    @Override
+    public Profesor updateEmail(@PathVariable long profesorId, @RequestParam String email) {
+        return profesorService.updateEmail(profesorId, email);
+    }
+
+    @Override
+    public Profesor addEmail(@PathVariable long profesorId, @RequestParam String email) {
+        return profesorService.addEmail(profesorId, email);
+    }
+
+    @Override
+    public List<Pfc> getPfcs(@PathVariable long profesorId) {
+        return profesorService.getPfcs(profesorId);
     }
 }

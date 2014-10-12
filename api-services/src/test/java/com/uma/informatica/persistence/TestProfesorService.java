@@ -2,8 +2,9 @@ package com.uma.informatica.persistence;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.uma.informatica.persistence.configuration.ServiceConfiguration;
+import com.uma.informatica.persistence.configuration.ServiceContext;
 import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.services.ProfesorService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ import static org.hamcrest.Matchers.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = ServiceContext.class)
 @ActiveProfiles("test")
 @DatabaseSetup("/dataset.xml")
 public class TestProfesorService {
@@ -53,7 +54,7 @@ public class TestProfesorService {
 
     @Test
     public void testCreate() throws Exception {
-        this.profesorService.createProfesor("asdf", "sdafg", "asdfg", "asdfg", "asdb", "asdg");
+        this.profesorService.createProfesor("asdf", "sdafg", "asdfg", TitulacionEnum.GESTION, "asdb", "asdg");
     }
 
     @Test

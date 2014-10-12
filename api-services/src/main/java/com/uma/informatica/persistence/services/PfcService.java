@@ -1,7 +1,9 @@
 package com.uma.informatica.persistence.services;
 
 import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -11,30 +13,41 @@ import java.util.List;
  */
 public interface PfcService {
 
-    Pfc findById(Long pfcId);
+    Pfc findById(long pfcId);
 
-    List<Pfc> findByDepartamento(String departamentId);
+    List<Pfc> findByDepartamento(String departamentoId);
 
-    Pfc findByName(String name);
+    List<Pfc> findByName(String nombre);
 
-    List<Pfc> findByEstado(String estado);
+    List<Pfc> findByEstado(EstadoPfc estado);
 
     List<Pfc> getAll();
 
-    Pfc createPfc(String nombre, String departamento, Date fechaInicio, EstadoPfc estadoPfc);
+    Profesor findByDirectorAcademico(long pfcId);
 
-    Pfc deletePfc(Long pfcId);
+    @Query("SELECT p FROM Profesor p INNER JOIN b.categories c WHERE c IN (:categories)")
+    List<Profesor> findByDirector(long pfcId);
 
-    Pfc updateNombre(Long pfcId, String nombre);
+    Pfc createPfc(String nombre, String departamento, EstadoPfc estadoPfc, List<Long> directores);
 
-    Pfc updateEstado(Long pfcId, String estado);
+    Pfc deletePfc(long pfcId);
 
-    Pfc addDirectorAcademico(Long pfcId, Long directorAcademico);
+    Pfc updateNombre(long pfcId, String nombre);
 
-    Pfc changeDirectorAcademico(Long pfcId, Long directorAcademico);
+    Pfc updateEstado(long pfcId, EstadoPfc estado);
 
-    Pfc deleteDirector(Long pfcId, Long director);
+    Profesor changeDirectorAcademico(long pfcId, long directorAcademico);
 
-    Pfc addDirector(Long pfcId, Long director);
+    List<Profesor> deleteDirectors(long pfcId, List<Long> directores);
+
+    List<Profesor> addDirectors(long pfcId, List<Long> directores);
+
+    Pfc getPfcFromAlumno(long alumnoId);
+
+    Pfc addPfcToAlumno(long alumnoId, String nombre, String departamento);
+
+    Pfc deletePfcFromAlumno(long alumnoId);
+
+    Pfc updateFechaFin(long pfcId, Date fechaFin);
 
 }

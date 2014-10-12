@@ -1,7 +1,7 @@
 package com.uma.informatica.persistence;
 
 import com.uma.informatica.persistence.configuration.EmbeddedDataSourceConfiguration;
-import com.uma.informatica.persistence.configuration.ServiceConfiguration;
+import com.uma.informatica.persistence.configuration.ServiceContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.is;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ServiceConfiguration.class, EmbeddedDataSourceConfiguration.class})
+@ContextConfiguration(classes = {ServiceContext.class, EmbeddedDataSourceConfiguration.class})
 @DirtiesContext
 @ActiveProfiles("test")
 public class EmbeddedDatabaseConnectionTest {

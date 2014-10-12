@@ -1,6 +1,6 @@
 package com.uma.informatica.persistence;
 
-import com.uma.informatica.persistence.configuration.ServiceConfiguration;
+import com.uma.informatica.persistence.configuration.ServiceContext;
 import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.services.AlumnoService;
@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = ServiceContext.class)
 @Transactional
 @TransactionConfiguration
 @ActiveProfiles("test")
@@ -54,6 +54,10 @@ public class TestAlumnoService {
                 hasProperty("pfc", is(not(nullValue()))),
                 hasProperty("pfc", allOf(
                         hasProperty("id", is(not(nullValue()))),
+                        hasProperty("nombre", is(not(nullValue()))),
+                        hasProperty("departamento", is(not(nullValue()))),
+                        hasProperty("estado", is(not(nullValue()))),
+                        hasProperty("fechaInicio", is(not(nullValue()))),
                         hasProperty("directores", is(not(empty())))
                 ))));
     }
@@ -105,6 +109,8 @@ public class TestAlumnoService {
     public void createTest() {
         Alumno alumno = alumnoService.createAlumno("12345678A", "sdaf", "sadb aw", "SISTEMAS", "sdag", "sdgdsb", "sdag", "23532", "3463426", "asdg", new Date());
         Assert.assertNotNull(alumno);
+
+        assertThat(alumno,  equalTo(alumnoService.findByDni("12345678A")));
     }
 
     @Test
@@ -113,6 +119,8 @@ public class TestAlumnoService {
         if (alumno != null) {
             alumnoService.deleteAlumno(alumno.getId());
         }
+        alumno = alumnoService.findByDni("12345678A");
+        assertThat(alumno, nullValue());
 
     }
 

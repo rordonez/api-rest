@@ -1,7 +1,9 @@
 package com.uma.informatica.persistence.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 
 import javax.persistence.*;
@@ -23,9 +25,15 @@ public class Pfc {
     @Column(name = "departamento", nullable = false, length = 100)
     private String departamento;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.YYYY_MM_DD_HH_00, timezone="CET")
     @Column(name = "fechaInicio")
     private Date fechaInicio;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.YYYY_MM_DD, timezone="CET")
+    @Column(name = "fechaFin")
+    private Date fechaFin;
+
+    @JoinColumn(name = "directorAcademico")
     @OneToOne(optional=true)
 	private Profesor directorAcademico;
 
@@ -43,12 +51,18 @@ public class Pfc {
 
     public Pfc() {}
 
-    public Pfc(String nombre, String departamento, Date fechaInicio, EstadoPfc estado) {
+    public Pfc(String nombre, String departamento, EstadoPfc estado, List<Profesor> directores) {
         this.nombre = nombre;
         this.departamento = departamento;
-        this.fechaInicio = fechaInicio;
         this.estado = estado;
-        this.directores = Collections.EMPTY_LIST;
+        this.directores = directores;
+    }
+
+    public Pfc(String nombre, String departamento) {
+        this.nombre = nombre;
+        this.departamento = departamento;
+        this.estado = EstadoPfc.NO_EMPEZADO;
+        this.directores = Collections.<Profesor>emptyList();
     }
 
     public Profesor getDirectorAcademico() {
@@ -107,4 +121,11 @@ public class Pfc {
         this.estado = estado;
     }
 
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 }

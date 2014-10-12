@@ -5,7 +5,7 @@ package com.uma.informatica.persistence.exceptions;
  */
 public class AlumnoNoEncontradoException extends RuntimeException {
 
-    public AlumnoNoEncontradoException(Long alumnoId) {
+    public AlumnoNoEncontradoException(long alumnoId) {
         super("alumno#" + alumnoId + " was not found");
         this.alumnoId = alumnoId;
     }

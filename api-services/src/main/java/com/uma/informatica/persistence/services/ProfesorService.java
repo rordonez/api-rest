@@ -1,8 +1,11 @@
 package com.uma.informatica.persistence.services;
 
 
+import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -10,17 +13,19 @@ import java.util.List;
  */
 public interface ProfesorService {
 
+    Collection<Pfc> search(long profesorId, String token);
+
     Profesor findById(Long id);
 
     Profesor findByDni(String dni);
 
-    List<Profesor> findProfesorByName(String name);
+    List<Profesor> findByNombre(String nombre);
 
-    List<Profesor> findProfesorByFirstNameOrLastName(String name, String lastName);
+    List<Profesor> findByNombreYApellidos(String name, String lastName);
 
     List<Profesor> getAll();
 
-    Profesor createProfesor(String dni, String name, String apellidos, String titulacion, String telefono, String email);
+    Profesor createProfesor(String dni, String name, String apellidos, TitulacionEnum titulacion, String telefono, String email);
 
     Profesor deleteProfesor(Long profesorId);
 
@@ -30,4 +35,15 @@ public interface ProfesorService {
 
     List<Profesor> getPfcDirectors(Long pfcId);
 
+    Profesor findByEmail(String email);
+
+    Profesor updateEmpresa(long profesorId, String empresa);
+
+    Profesor addEmpresa(long profesorId, String empresa);
+
+    Profesor addTelefono(long profesorId, String telefono);
+
+    Profesor addEmail(long profesorId, String email);
+
+    List<Pfc> getPfcs(long profesorId);
 }

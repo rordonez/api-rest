@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-  <profesor id="1" dni="32658329G" nombre="Pepe" apellidos="Montoro Casas" titulacion="ING SUPERIOR" empresa="" cargo="" direccionEmpresa="" telefono="678356436" email="montoro@uma.es"/>
-  <profesor id="2" dni="34678346I" nombre="Ra&#250;l" apellidos="Sanchez Mandado" titulacion="Master en Comunicaciones" telefono="678456382" email="raul@gmail.com"/>
-  <profesor id="3" dni="78943278U" nombre="Jaime" apellidos="Hurtado Molina" titulacion="ING SISTEMAS" empresa="" cargo="" direccionEmpresa="" telefono="675234987" email="hmolina@uma.es"/>
+  <profesor id="1" dni="32658329G" nombre="Pepe" apellidos="Montoro Casas" titulacion="SUPERIOR" empresa="" cargo="" direccionEmpresa="" telefono="678356436" email="montoro@uma.es"/>
+  <profesor id="2" dni="34678346I" nombre="Ra&#250;l" apellidos="Sanchez Mandado" titulacion="GESTION" telefono="678456382" email="raul@gmail.com"/>
+  <profesor id="3" dni="78943278U" nombre="Jaime" apellidos="Hurtado Molina" titulacion="SISTEMAS" empresa="" cargo="" direccionEmpresa="" telefono="675234987" email="hmolina@uma.es"/>
   <pfc id="1" nombre="Tecnolog&#237;as de la Innovaci&#243;n" departamento="Lenguajes y Ciencias de la Computaci&#243;n" fechaInicio="2001-09-23" estado="FINALIZADO"/>
   <pfc id="2" nombre="Genoma Humano" departamento="Matem&#225;tica aplicada" fechaInicio="2004-09-23" estado="SIN_ASIGNAR"/>
   <pfc id="3" nombre="Calculadora cient&#237;fica" departamento="Arquitectura de Computadores" fechaInicio="2013-07-29" estado="PENDIENTE_ANTEPROYECTO"/>

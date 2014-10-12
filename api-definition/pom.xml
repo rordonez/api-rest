@@ -16,5 +16,10 @@
             <artifactId>api-services</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-twitter</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

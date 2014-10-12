@@ -1,5 +1,7 @@
 package com.uma.informatica.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 
 import javax.persistence.*;
@@ -11,7 +13,6 @@ public class Alumno {
 
     public static final int MAX_LONGITUD_NOMBRE = 45;
     public static final int MAX_LONGITUD_APELLIDOS = 100;
-    public static final int MAX_LONGITUD_TITULACION = 80;
     public static final int MAX_LONGITUD_DOMICILIO = 80;
     public static final int MAX_LONGITUD_LOCALIDAD = 60;
     public static final int MAX_LONGITUD_PAIS = 45;
@@ -26,7 +27,7 @@ public class Alumno {
     @Column(name = "dni", unique = true, nullable = false, length = 9)
     private String dni;
 
-    @ManyToOne
+    @ManyToOne( cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "pfc")
     private Pfc pfc;
 
@@ -37,7 +38,7 @@ public class Alumno {
     private String apellidos;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "titulacion", nullable = false, length = MAX_LONGITUD_TITULACION)
+    @Column(name = "titulacion", nullable = false, length = TitulacionEnum.MAX_LONGITUD_TITULACION)
     private TitulacionEnum titulacion;
 
     @Column(name = "domicilio", nullable = false, length = MAX_LONGITUD_DOMICILIO)
@@ -58,6 +59,7 @@ public class Alumno {
     @Column(name = "email", nullable = false, length = MAX_LONGITUD_EMAIL)
     private String email;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.YYYY_MM_DD, timezone="CET")
     @Column(name="fechaNacimiento", nullable = false)
     private Date fechaNacimiento;
 

@@ -1,7 +1,9 @@
 package com.uma.informatica.persistence.services;
 
+import com.uma.informatica.persistence.exceptions.ProfesorNoEncontradoException;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.PfcRepository;
 import com.uma.informatica.persistence.repositories.ProfesorRepository;
 import org.hibernate.Hibernate;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +34,12 @@ public class JpaProfesorService implements ProfesorService {
     }
 
 
+
+    @Override
+    public Collection<Pfc> search(long profesorId, String token) {
+        return this.profesorRepository.search(profesorId, "%" + token + "%");    }
+
+
     @Override
     public Profesor findByDni(String dni) {
         return this.profesorRepository.findByDni(dni);
@@ -42,13 +51,13 @@ public class JpaProfesorService implements ProfesorService {
     }
 
     @Override
-    public List<Profesor> findProfesorByName(String name) {
+    public List<Profesor> findByNombre(String name) {
         return this.profesorRepository.findByNombre(name, Sort.Direction.ASC);
     }
 
     @Override
-    public List<Profesor> findProfesorByFirstNameOrLastName(String name, String lastName) {
-        return this.profesorRepository.findByNombreOrApellidos(name, lastName);
+    public List<Profesor> findByNombreYApellidos(String name, String lastName) {
+        return this.profesorRepository.findByNombreAndApellidos(name, lastName);
     }
 
     @Override
@@ -57,7 +66,7 @@ public class JpaProfesorService implements ProfesorService {
     }
 
     @Override
-    public Profesor createProfesor(String dni, String name, String apellidos, String titulacion, String telefono, String email) {
+    public Profesor createProfesor(String dni, String name, String apellidos, TitulacionEnum titulacion, String telefono, String email) {
         Profesor p = new Profesor(dni, name, apellidos, titulacion, telefono, email);
         return this.profesorRepository.save(p);
     }
@@ -88,11 +97,66 @@ public class JpaProfesorService implements ProfesorService {
     public List<Profesor> getPfcDirectors(Long pfcId) {
         Pfc pfc = this.pfcRepository.findOne(pfcId);
 
-        ArrayList<Profesor> profesors = new ArrayList<Profesor>();
+        ArrayList<Profesor> profesors = new ArrayList<>();
         for (Profesor p : pfc.getDirectores()) {
             Hibernate.initialize(p);
             profesors.add(p);
         }
         return Collections.unmodifiableList(profesors);
+    }
+
+    @Override
+    public Profesor findByEmail(String email) {
+        return this.profesorRepository.findByEmail(email);
+    }
+
+    @Override
+    public Profesor updateEmpresa(long profesorId, String empresa) {
+        Profesor profesor = this.profesorRepository.findOne(profesorId);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException(profesorId);
+        }
+        profesor.setEmpresa(empresa);
+
+        return this.profesorRepository.save(profesor);
+    }
+
+    @Override
+    public Profesor addEmpresa(long profesorId, String empresa) {
+        Profesor profesor = this.profesorRepository.findOne(profesorId);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException(profesorId);
+        }
+        profesor.setEmpresa(empresa);
+        return profesor;
+    }
+
+    @Override
+    public Profesor addTelefono(long profesorId, String telefono) {
+        Profesor profesor = this.profesorRepository.findOne(profesorId);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException(profesorId);
+        }
+        profesor.setTelefono(telefono);
+        return profesor;
+    }
+
+    @Override
+    public Profesor addEmail(long profesorId, String email) {
+        Profesor profesor = this.profesorRepository.findOne(profesorId);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException(profesorId);
+        }
+        profesor.setEmail(email);
+        return profesor;
+    }
+
+    @Override
+    public List<Pfc> getPfcs(long profesorId) {
+        Profesor profesor = this.profesorRepository.findOne(profesorId);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException(profesorId);
+        }
+        return (List<Pfc>) profesor.getPfcs();
     }
 }

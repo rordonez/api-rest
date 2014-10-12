@@ -1,7 +1,5 @@
 package com.uma.informatica.persistence.configuration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,8 +16,6 @@ import javax.sql.DataSource;
 @Configuration
 @Profile({"test"})
 public class EmbeddedDataSourceConfiguration {
-
-    private Log log = LogFactory.getLog(getClass());
 
     @Bean
     public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
@@ -39,6 +35,7 @@ public class EmbeddedDataSourceConfiguration {
 
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
+
                 .setName("restapi")
                 .addScript("classpath:db-schema.sql")
                 .addScript("classpath:db-data.sql")

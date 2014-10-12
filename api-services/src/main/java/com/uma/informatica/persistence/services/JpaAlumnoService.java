@@ -33,10 +33,10 @@ public class JpaAlumnoService implements AlumnoService {
     }
 
     @Override
-    public Alumno findById(Long id) throws AlumnoNoEncontradoException {
-        Alumno alumno = this.alumnoRepository.findOne(id);
+    public Alumno findById(long alumnoId) throws AlumnoNoEncontradoException {
+        Alumno alumno = this.alumnoRepository.findOne(alumnoId);
         if(alumno == null) {
-            throw new AlumnoNoEncontradoException(id);
+            throw new AlumnoNoEncontradoException(alumnoId);
         }
         return alumno;
     }
@@ -53,7 +53,7 @@ public class JpaAlumnoService implements AlumnoService {
      * @return
      */
     @Override
-    public List<Alumno> findByPfc(Long pfcId) {
+    public List<Alumno> findByPfc(long pfcId) {
         Pfc pfc = this.pfcRepository.findOne(pfcId);
         return this.alumnoRepository.findByPfc(pfc);
     }
@@ -69,15 +69,21 @@ public class JpaAlumnoService implements AlumnoService {
     }
 
     @Override
-    public Alumno deleteAlumno(Long alumnId) {
+    public Alumno deleteAlumno(long alumnId) {
         Alumno alumno = alumnoRepository.findOne(alumnId);
+        if (alumno == null) {
+            throw new AlumnoNoEncontradoException(alumnId);
+        }
         alumnoRepository.delete(alumnId);
         return alumno;
     }
 
     @Override
-    public Alumno updateDireccion(Long id, String domicilio, String localidad, String pais, String codigoPostal) {
+    public Alumno updateDireccion(long id, String domicilio, String localidad, String pais, String codigoPostal) {
         Alumno alumno = this.alumnoRepository.findOne(id);
+        if (alumno == null) {
+            throw new AlumnoNoEncontradoException(id);
+        }
         alumno.setDomicilio(domicilio);
         alumno.setCodigoPostal(codigoPostal);
         alumno.setLocalidad(localidad);
@@ -88,15 +94,21 @@ public class JpaAlumnoService implements AlumnoService {
     }
 
     @Override
-    public Alumno updateEmail(Long id, String email) {
+    public Alumno updateEmail(long id, String email) {
         Alumno alumno = this.alumnoRepository.findOne(id);
+        if (alumno == null) {
+            throw new AlumnoNoEncontradoException(id);
+        }
         alumno.setEmail(email);
         return this.alumnoRepository.save(alumno);
     }
 
     @Override
-    public Alumno updateTelefono(Long id, String telefono) {
+    public Alumno updateTelefono(long id, String telefono) {
         Alumno alumno = this.alumnoRepository.findOne(id);
+        if (alumno == null) {
+            throw new AlumnoNoEncontradoException(id);
+        }
         alumno.setTelefono(telefono);
         return this.alumnoRepository.save(alumno);
     }
@@ -107,21 +119,5 @@ public class JpaAlumnoService implements AlumnoService {
         this.alumnoRepository.save(alumno);
         return alumno;
     }
-
-    @Override
-    public Alumno addPfc(Long id, Long pfcId) {
-        Alumno alumno = this.alumnoRepository.findOne(id);
-        alumno.setPfc(this.pfcRepository.findOne(pfcId));
-        return this.alumnoRepository.save(alumno);
-    }
-
-    @Override
-    public Alumno deletePfc(Long id) {
-        Alumno alumno = this.alumnoRepository.findOne(id);
-        alumno.setPfc(null);
-        return this.alumnoRepository.save(alumno);
-
-    }
-
 
 }
