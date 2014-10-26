@@ -35,11 +35,12 @@ public class EmbeddedDataSourceConfiguration {
 
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
-
-                .setName("restapi")
-                .addScript("classpath:db-schema.sql")
-                .addScript("classpath:db-data.sql")
+                .setScriptEncoding("UTF-8")
+                .ignoreFailedDrops(true)
+                .addScript("db-schema.sql")
+                .addScript("db-data.sql")
                 .build();
+
     }
 
 }

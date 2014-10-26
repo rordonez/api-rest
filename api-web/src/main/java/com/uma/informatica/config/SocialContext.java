@@ -1,26 +1,50 @@
 package com.uma.informatica.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.UserIdSource;
-import org.springframework.social.config.annotation.EnableJdbcConnectionRepository;
+import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
+import org.springframework.social.config.annotation.EnableSocial;
+import org.springframework.social.config.annotation.SocialConfigurer;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
+import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.connect.web.ConnectController;
-import org.springframework.social.twitter.config.annotation.EnableTwitter;
+import org.springframework.social.twitter.connect.TwitterConnectionFactory;
+
+import javax.sql.DataSource;
 
 /**
  * Created by rafa on 15/06/14.
  */
 @Profile({"production"})
-@EnableTwitter(appId = "PS5utEALeq3wUCgXp6QP2iFGK", appSecret = "boiPV0L0uPr8KAtUWSv7DeNXpNAj1MyBG8Q2k3OKnuN9qPdvcI")
-@EnableJdbcConnectionRepository
-public class SocialContext {
+@EnableSocial
+//@EnableJdbcConnectionRepository
+public class SocialContext implements SocialConfigurer {
 
-    @Bean
-    public UserIdSource userIdSource() {
+    @Autowired
+    DataSource dataSource;
+
+    @Autowired
+    Environment environment;
+
+    @Override
+    public void addConnectionFactories(ConnectionFactoryConfigurer cfConfig, Environment env) {
+        cfConfig.addConnectionFactory(new TwitterConnectionFactory(
+                env.getProperty("twitter.consumerKey"),
+                env.getProperty("twitter.consumerSecret")));
+    }
+
+    @Override
+    public UserIdSource getUserIdSource() {
         return new UserIdSource() {
             @Override
             public String getUserId() {
@@ -29,13 +53,32 @@ public class SocialContext {
         };
     }
 
+    @Override
+    @Scope(value="singleton", proxyMode= ScopedProxyMode.INTERFACES)
+    public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
+        return new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator(), textEncryptor());
+    }
+
     @Bean
-    public TextEncryptor textEncryptor() {
-        return Encryptors.noOpText();
+    @Scope(value="singleton", proxyMode=ScopedProxyMode.INTERFACES)
+    public ConnectionFactoryLocator connectionFactoryLocator() {
+        ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
+
+        registry.addConnectionFactory(new TwitterConnectionFactory(
+                environment.getProperty("twitter.consumerKey"),
+                environment.getProperty("twitter.consumerSecret")));
+
+        return registry;
     }
 
     @Bean
     public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
         return new ConnectController(connectionFactoryLocator, connectionRepository);
+    }
+
+
+    @Bean
+    public TextEncryptor textEncryptor() {
+        return Encryptors.noOpText();
     }
 }

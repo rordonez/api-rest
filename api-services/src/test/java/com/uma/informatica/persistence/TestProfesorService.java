@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.*;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class})
 @ContextConfiguration(classes = ServiceContext.class)
 @ActiveProfiles("test")
-@DatabaseSetup("/dataset.xml")
+@DatabaseSetup("classpath:/dataset.xml")
 public class TestProfesorService {
 
     @Inject

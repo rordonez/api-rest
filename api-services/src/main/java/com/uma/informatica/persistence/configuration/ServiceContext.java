@@ -21,7 +21,7 @@ import java.io.File;
 @EnableJpaRepositories(basePackages = "com.uma.informatica.persistence.repositories")
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"com.uma.informatica.persistence.configuration", "com.uma.informatica.persistence.services"})
-@PropertySource("/config.properties")
+@PropertySource("classpath:/config.properties")
 @Configuration
 public class ServiceContext {
 
