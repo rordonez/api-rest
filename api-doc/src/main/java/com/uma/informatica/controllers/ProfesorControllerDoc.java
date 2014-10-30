@@ -128,7 +128,7 @@ public class ProfesorControllerDoc implements ProfesorController {
     @ResponseBody
     public List<Pfc> getPfcs(@PathVariable long profesorId) {
         Profesor profesor = findProfesorById(profesorId);
-        return (List) profesor.getPfcs();
+        return (List<Pfc>) profesor.getPfcs();
     }
 
 

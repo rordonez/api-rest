@@ -5,7 +5,9 @@ package com.uma.informatica.persistence.exceptions;
  */
 public class AlumnoSinPfcException extends RuntimeException {
 
-    private long alumnoId;
+	private static final long serialVersionUID = -8110431524359273613L;
+
+	private long alumnoId;
 
     public AlumnoSinPfcException(long alumnoId) {
         super("Alumno: " + alumnoId + " no tiene Pfc asignado");

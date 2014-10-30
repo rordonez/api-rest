@@ -5,7 +5,9 @@ package com.uma.informatica.persistence.exceptions;
  */
 public class PfcNoEncontradoException extends RuntimeException {
 
-    private long pfcId;
+	private static final long serialVersionUID = 8478840023357207797L;
+
+	private long pfcId;
 
     public PfcNoEncontradoException(Long pfcId) {
         super("pfc#" + pfcId + " was not found");

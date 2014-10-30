@@ -5,7 +5,9 @@ package com.uma.informatica.persistence.exceptions;
  */
 public class InvalidPfcDataCreationException extends RuntimeException {
 
-    private String message;
+	private static final long serialVersionUID = 6730879148792638718L;
+
+	private String message;
 
     public InvalidPfcDataCreationException(String message) {
         super(message);

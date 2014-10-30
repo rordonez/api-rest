@@ -5,9 +5,11 @@ import java.io.Serializable;
 /**
  * Created by rafa on 14/07/14.
  */
-public class DireccionRequestBody implements Serializable{
+public class DireccionRequestBody implements Serializable {
 
-    private String domicilio;
+	private static final long serialVersionUID = 2478321512997365280L;
+
+	private String domicilio;
     private String localidad;
     private String pais;
     private String codigoPostal;

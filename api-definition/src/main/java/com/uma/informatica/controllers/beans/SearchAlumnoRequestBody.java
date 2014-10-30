@@ -7,7 +7,9 @@ import java.io.Serializable;
  */
 public class SearchAlumnoRequestBody implements Serializable {
 
-    private String dni;
+	private static final long serialVersionUID = -6603009412278928566L;
+
+	private String dni;
     private String nombre;
     private String apellidos;
 

@@ -8,7 +8,9 @@ import java.util.List;
  */
 public class ProfesorNoEncontradoException extends RuntimeException {
 
-    private List<Long> profesorsId;
+	private static final long serialVersionUID = -2537754913402994422L;
+
+	private List<Long> profesorsId;
 
     public ProfesorNoEncontradoException(long message) {
         super("Profesor: " + message + "no encontrado");
