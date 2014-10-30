@@ -1,27 +1,26 @@
 package com.uma.informatica.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.services.AlumnoService;
 import com.uma.informatica.persistence.services.PfcService;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rafaordonez on 16/02/14.
  */
-@Controller
+@RestController
 public class AlumnoControllerRest implements AlumnoController {
 
     private AlumnoService alumnoService;
@@ -49,7 +48,7 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public Alumno createAlumno(@RequestBody Alumno alumno) {
+    public Alumno createAlumno(@Valid @RequestBody Alumno alumno) {
         return alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento());
     }
 
@@ -60,7 +59,7 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public List<Alumno> searchAlumnos(@NotNull @RequestBody SearchAlumnoRequestBody search) {
+    public List<Alumno> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
         List<Alumno> alumnoList = new ArrayList<>();
         if (search.getDni() != null) {
             alumnoList.add(alumnoService.findByDni(search.getDni()));
@@ -78,17 +77,17 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public Alumno updateDireccion(@PathVariable long alumnoId, @RequestBody DireccionRequestBody direccion) {
+    public Alumno updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
         return alumnoService.updateDireccion(alumnoId, direccion.getDomicilio(), direccion.getLocalidad(), direccion.getPais(), direccion.getCodigoPostal());
     }
 
     @Override
-    public Alumno updateEmail(@PathVariable long alumnoId, @RequestParam String email) {
+    public Alumno updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
         return alumnoService.updateEmail(alumnoId, email);
     }
 
     @Override
-    public Alumno updateTelefono(@PathVariable long alumnoId, @RequestParam String telefono) {
+    public Alumno updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
         return alumnoService.updateTelefono(alumnoId, telefono);
     }
 
@@ -98,7 +97,7 @@ public class AlumnoControllerRest implements AlumnoController {
     }
 
     @Override
-    public Pfc addPfc(@PathVariable long alumnoId, @RequestBody Pfc pfc) {
+    public Pfc addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
         return pfcService.addPfcToAlumno(alumnoId, pfc.getNombre(), pfc.getDepartamento());
     }
 
