@@ -1,6 +1,13 @@
 package com.uma.informatica.controllers;
 
-import com.uma.informatica.config.RestApiAppContext;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.nio.charset.Charset;
+
+import javax.transaction.Transactional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,9 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.transaction.Transactional;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import com.uma.informatica.config.RestApiAppContext;
 
 /**
  * Created by rafa on 30/10/14.
@@ -43,7 +48,19 @@ public class AlumnoControllerRestTest {
     @Test
     public void testGetAlumnos() throws Exception {
         mockMvc.perform(get("/alumnos")
-                .accept(MediaType.APPLICATION_JSON))
+        		.accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(7)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[2].id", is(3)))
+                .andExpect(jsonPath("$[3].id", is(4)))
+                .andExpect(jsonPath("$[4].id", is(5)))
+                .andExpect(jsonPath("$[5].id", is(6)))
+                .andExpect(jsonPath("$[6].id", is(7)))
+                .andExpect(jsonPath("$[6].pfc", nullValue()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
