@@ -6,7 +6,9 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.wordnik.swagger.annotations.ApiOperation;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +52,9 @@ public class AlumnoControllerDoc implements AlumnoController {
     @Override
     @ApiOperation(value = "Devuelve un alumno dado su identificador")
     @RequestMapping(value = "/{alumnoId}", method = RequestMethod.GET)
-    public Alumno getAlumno(@PathVariable long alumnoId) {
-        return findAlumnoById(alumnoId);
+    public ResponseEntity<Resource<Alumno>> getAlumno(@PathVariable long alumnoId) {
+//        return findAlumnoById(alumnoId);
+        return null;
     }
 
 

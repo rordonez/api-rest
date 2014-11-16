@@ -3,13 +3,15 @@ package com.uma.informatica.persistence.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "alumno")
-public class Alumno {
+public class Alumno implements Identifiable<Long>, Serializable {
 
     public static final int MAX_LONGITUD_NOMBRE = 45;
     public static final int MAX_LONGITUD_APELLIDOS = 100;
@@ -64,6 +66,10 @@ public class Alumno {
     private Date fechaNacimiento;
 
     public Alumno() {}
+
+    public Alumno(Alumno a) {
+        this(a.getDni(), a.getNombre(), a.getApellidos(), a.getTitulacion(), a.getDomicilio(), a.getLocalidad(), a.getPais(), a.getCodigoPostal(), a.getTelefono(), a.getEmail(), a.getFechaNacimiento());
+    }
 
     public Alumno(String dni, String nombre, String apellidos, TitulacionEnum titulacion, String domicilio, String localidad, String pais, String codigoPostal, String telefono, String email, Date fechaNacimiento) {
         this.dni = dni;

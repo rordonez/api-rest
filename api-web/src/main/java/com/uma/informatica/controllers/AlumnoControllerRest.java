@@ -6,6 +6,11 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.services.AlumnoService;
 import com.uma.informatica.persistence.services.PfcService;
+import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceAssembler;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,16 +25,22 @@ import java.util.List;
 /**
  * Created by rafaordonez on 16/02/14.
  */
+@ExposesResourceFor(Alumno.class)
 @RestController
 public class AlumnoControllerRest implements AlumnoController {
 
     private AlumnoService alumnoService;
     private PfcService pfcService;
 
+    private final ResourceAssembler<Alumno, Resource<Alumno>> alumnoResourceAssembler;
+    private final ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler;
+
     @Inject
-    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService) {
+    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, ResourceAssembler<Alumno, Resource<Alumno>> alumnoResourceAssembler, ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler) {
         this.alumnoService = alumnoService;
         this.pfcService = pfcService;
+        this.alumnoResourceAssembler = alumnoResourceAssembler;
+        this.pfcResourceAssembler = pfcResourceAssembler;
     }
 
 
@@ -42,8 +53,8 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public Alumno getAlumno(@PathVariable long alumnoId) {
-        return alumnoService.findById(alumnoId);
+    public ResponseEntity<Resource<Alumno>> getAlumno(@PathVariable long alumnoId) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.findById(alumnoId)), HttpStatus.OK);
     }
 
 

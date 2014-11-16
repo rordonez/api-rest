@@ -2,6 +2,7 @@ package com.uma.informatica.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -20,6 +21,7 @@ import java.util.Properties;
  */
 @ComponentScan({"com.uma.informatica.controllers"})
 @EnableWebMvc
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class WebAppContext extends WebMvcConfigurerAdapter {
 
     @Override
@@ -83,4 +85,5 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
+
 }
