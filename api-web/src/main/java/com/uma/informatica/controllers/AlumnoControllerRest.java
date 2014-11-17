@@ -6,9 +6,11 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.services.AlumnoService;
 import com.uma.informatica.persistence.services.PfcService;
+
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +48,8 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public List<Alumno> getAlumnos() {
-        List<Alumno> alumnoList = new ArrayList<>();
-        alumnoList.addAll(alumnoService.getAll());
-        return alumnoList;
+    public ResponseEntity<Resources<Resource<Alumno>>> getAlumnos() {
+        return new ResponseEntity<> (Resources.wrap(alumnoService.getAll()), HttpStatus.OK);
     }
 
 
@@ -59,18 +60,18 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public Alumno createAlumno(@Valid @RequestBody Alumno alumno) {
-        return alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento());
+    public ResponseEntity<Resource<Alumno>> createAlumno(@Valid @RequestBody Alumno alumno) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
     }
 
     @Override
-    public Alumno removeAlumno(@PathVariable long alumnoId) {
-        return alumnoService.deleteAlumno(alumnoId);
+    public ResponseEntity<Resource<Alumno>> removeAlumno(@PathVariable long alumnoId) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.deleteAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 
 
     @Override
-    public List<Alumno> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
+    public ResponseEntity<Resources<Resource<Alumno>>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
         List<Alumno> alumnoList = new ArrayList<>();
         if (search.getDni() != null) {
             alumnoList.add(alumnoService.findByDni(search.getDni()));
@@ -83,37 +84,37 @@ public class AlumnoControllerRest implements AlumnoController {
                 alumnoList.addAll(alumnoService.findByNombre(search.getNombre()));
             }
         }
-        return alumnoList;
+        return new ResponseEntity<> (Resources.wrap(alumnoList), HttpStatus.OK);
     }
 
 
     @Override
-    public Alumno updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
-        return alumnoService.updateDireccion(alumnoId, direccion.getDomicilio(), direccion.getLocalidad(), direccion.getPais(), direccion.getCodigoPostal());
+    public ResponseEntity<Resource<Alumno>> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateDireccion(alumnoId, direccion.getDomicilio(), direccion.getLocalidad(), direccion.getPais(), direccion.getCodigoPostal())), HttpStatus.OK);
     }
 
     @Override
-    public Alumno updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
-        return alumnoService.updateEmail(alumnoId, email);
+    public ResponseEntity<Resource<Alumno>> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateEmail(alumnoId, email)), HttpStatus.OK);
     }
 
     @Override
-    public Alumno updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
-        return alumnoService.updateTelefono(alumnoId, telefono);
+    public ResponseEntity<Resource<Alumno>> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateTelefono(alumnoId, telefono)), HttpStatus.OK);
     }
 
     @Override
-    public Pfc getPfc(@PathVariable long alumnoId) {
-        return pfcService.getPfcFromAlumno(alumnoId);
+    public ResponseEntity<Resource<Pfc>> getPfc(@PathVariable long alumnoId) {
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.getPfcFromAlumno(alumnoId)), HttpStatus.OK);
     }
 
     @Override
-    public Pfc addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
-        return pfcService.addPfcToAlumno(alumnoId, pfc.getNombre(), pfc.getDepartamento());
+    public ResponseEntity<Resource<Pfc>> addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.addPfcToAlumno(alumnoId, pfc.getNombre(), pfc.getDepartamento())), HttpStatus.CREATED);
     }
 
     @Override
-    public Pfc deletePfc(@PathVariable long alumnoId) {
-        return pfcService.deletePfcFromAlumno(alumnoId);
+    public ResponseEntity<Resource<Pfc>> deletePfc(@PathVariable long alumnoId) {
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 }

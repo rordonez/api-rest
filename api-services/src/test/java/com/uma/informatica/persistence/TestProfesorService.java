@@ -1,11 +1,15 @@
 package com.uma.informatica.persistence;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.uma.informatica.persistence.configuration.ServiceContext;
-import com.uma.informatica.persistence.models.Profesor;
-import com.uma.informatica.persistence.models.enums.TitulacionEnum;
-import com.uma.informatica.persistence.services.ProfesorService;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,12 +20,12 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import javax.inject.Inject;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.uma.informatica.persistence.configuration.ServiceContext;
+import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import com.uma.informatica.persistence.services.ProfesorService;
 
 /**
  * Created by rafaordonez on 04/02/14.
@@ -38,7 +42,7 @@ public class TestProfesorService {
 
     @Test(expected = NullPointerException.class)
     public void testWithNoResults() throws Exception {
-        List<Profesor> profesores = this.profesorService.getPfcDirectors(1000L);
+        this.profesorService.getPfcDirectors(1000L);
     }
 
     @Test
