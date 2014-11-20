@@ -1,27 +1,31 @@
 package com.uma.informatica.controllers;
 
-import com.uma.informatica.persistence.models.Pfc;
-import com.uma.informatica.persistence.models.Profesor;
-import com.uma.informatica.persistence.models.enums.EstadoPfc;
-import com.uma.informatica.persistence.services.PfcService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.EstadoPfc;
+import com.uma.informatica.persistence.services.PfcService;
 
 /**
  * Created by rafaordonez on 26/02/14.
  */
 
-@Controller
+@ExposesResourceFor(Pfc.class)
+@RestController
 @RequestMapping(value = "/pfcs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PfcControllerRest implements PfcController {
 

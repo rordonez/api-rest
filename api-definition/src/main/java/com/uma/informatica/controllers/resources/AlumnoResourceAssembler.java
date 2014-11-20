@@ -1,13 +1,14 @@
-package com.uma.informatica.controllers;
+package com.uma.informatica.controllers.resources;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import javax.inject.Inject;
 
-import org.springframework.hateoas.Link;
+import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
+import com.uma.informatica.controllers.AlumnoController;
 import com.uma.informatica.persistence.models.Alumno;
+import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.resources.AlumnoResource;
 
 /**
@@ -16,22 +17,29 @@ import com.uma.informatica.resources.AlumnoResource;
 @Component
 public class AlumnoResourceAssembler extends ResourceAssemblerSupport<Alumno, AlumnoResource> {
 
-    public AlumnoResourceAssembler() {
+	
+	private String pfcRel = "pfc";
+
+	private EntityLinks entityLinks;
+	
+	
+	@Inject
+	public AlumnoResourceAssembler(EntityLinks entityLinks) {
 		super(AlumnoController.class, AlumnoResource.class);
+		this.entityLinks = entityLinks;
 	}
 
-	private String pfcRel = "pfc";
 
     @Override
     public AlumnoResource toResource(Alumno alumno) {
-        long alumnoId = alumno.getId();
+        Pfc pfc = alumno.getPfc();
+
         alumno.setPfc(null);
         AlumnoResource alumnoResource = new AlumnoResource(alumno);
-        Link selfLink = linkTo(methodOn(AlumnoControllerRest.class).getAlumno(alumnoId)).withSelfRel();
-        Link pfcLink = linkTo(methodOn(AlumnoControllerRest.class).getPfc(alumnoId)).withRel(pfcRel);
-
-        alumnoResource.add(selfLink);
-        alumnoResource.add(pfcLink);
+        alumnoResource.add(entityLinks.linkToSingleResource(alumno));
+        if(pfc != null) {        	
+        	alumnoResource.add(entityLinks.linkToSingleResource(pfc).withRel(pfcRel));
+        }
         return alumnoResource;
     }
 

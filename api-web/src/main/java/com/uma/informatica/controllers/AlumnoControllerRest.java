@@ -11,8 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
+import com.uma.informatica.controllers.resources.AlumnoResourceAssembler;
+import com.uma.informatica.controllers.resources.PfcResourceAssembler;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.services.AlumnoService;
 import com.uma.informatica.persistence.services.PfcService;
 import com.uma.informatica.resources.AlumnoResource;
+import com.uma.informatica.resources.PfcResource;
 
 /**
  * Created by rafaordonez on 16/02/14.
@@ -40,10 +41,10 @@ public class AlumnoControllerRest implements AlumnoController {
     private PfcService pfcService;
 
     private final AlumnoResourceAssembler alumnoResourceAssembler;
-    private final ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler;
+    private final PfcResourceAssembler pfcResourceAssembler;
 
     @Inject
-    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, AlumnoResourceAssembler alumnoResourceAssembler, ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler) {
+    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, AlumnoResourceAssembler alumnoResourceAssembler, PfcResourceAssembler pfcResourceAssembler) {
         this.alumnoService = alumnoService;
         this.pfcService = pfcService;
         this.alumnoResourceAssembler = alumnoResourceAssembler;
@@ -115,17 +116,17 @@ public class AlumnoControllerRest implements AlumnoController {
     }
 
     @Override
-    public ResponseEntity<Resource<Pfc>> getPfc(@PathVariable long alumnoId) {
+    public ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId) {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.getPfcFromAlumno(alumnoId)), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Resource<Pfc>> addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
+    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.addPfcToAlumno(alumnoId, pfc.getNombre(), pfc.getDepartamento())), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<Resource<Pfc>> deletePfc(@PathVariable long alumnoId) {
+    public ResponseEntity<PfcResource> deletePfc(@PathVariable long alumnoId) {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 }

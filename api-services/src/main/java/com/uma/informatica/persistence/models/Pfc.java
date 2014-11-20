@@ -1,21 +1,37 @@
 package com.uma.informatica.persistence.models;
 
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.springframework.hateoas.Identifiable;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 
-import javax.persistence.*;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 @Entity
 @Table(name = "pfc")
-public class Pfc {
+public class Pfc implements Identifiable<Long>, Serializable {
 
-    @Id
+	private static final long serialVersionUID = -4371465104392056259L;
+
+	@Id
     @GeneratedValue
     private Long id;
 

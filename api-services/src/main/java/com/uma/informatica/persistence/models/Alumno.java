@@ -1,19 +1,32 @@
 package com.uma.informatica.persistence.models;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.springframework.hateoas.Identifiable;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
-import org.springframework.hateoas.Identifiable;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 @Entity
 @Table(name = "alumno")
 public class Alumno implements Identifiable<Long>, Serializable {
 
-    public static final int MAX_LONGITUD_NOMBRE = 45;
+	private static final long serialVersionUID = 8520931837010119598L;
+
+	public static final int MAX_LONGITUD_NOMBRE = 45;
     public static final int MAX_LONGITUD_APELLIDOS = 100;
     public static final int MAX_LONGITUD_DOMICILIO = 80;
     public static final int MAX_LONGITUD_LOCALIDAD = 60;
