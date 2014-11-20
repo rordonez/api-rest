@@ -17,6 +17,7 @@ import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.resources.AlumnoResource;
 
 /**
  * Created by rafaordonez on 02/03/14.
@@ -26,35 +27,35 @@ public interface AlumnoController {
 
 
     @RequestMapping (method = RequestMethod.GET)
-    ResponseEntity<Resources<Resource<Alumno>>> getAlumnos();
+    ResponseEntity<Resources<AlumnoResource>> getAlumnos();
 
 
     @RequestMapping (method = RequestMethod.PUT)
-    ResponseEntity<Resource<Alumno>> createAlumno(@Valid @RequestBody Alumno alumno);
+    ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno);
 
 
     @RequestMapping (method = RequestMethod.POST)
-    ResponseEntity<Resources<Resource<Alumno>>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search);
+    ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search);
 
 
     @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}")
-    ResponseEntity<Resource<Alumno>> getAlumno(@PathVariable long alumnoId);
+    ResponseEntity<AlumnoResource> getAlumno(@PathVariable long alumnoId);
 
 
     @RequestMapping (method = RequestMethod.DELETE, value = "/{alumnoId}")
-    ResponseEntity<Resource<Alumno>> removeAlumno(@PathVariable long alumnoId);
+    ResponseEntity<AlumnoResource> removeAlumno(@PathVariable long alumnoId);
 
 
     @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/direccion")
-    ResponseEntity<Resource<Alumno>> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion);
+    ResponseEntity<AlumnoResource> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion);
 
 
     @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/email")
-    ResponseEntity<Resource<Alumno>> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email);
+    ResponseEntity<AlumnoResource> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email);
 
 
     @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/telefono")
-    ResponseEntity<Resource<Alumno>> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono);
+    ResponseEntity<AlumnoResource> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono);
 
 
     @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}/pfc")

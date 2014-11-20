@@ -1,11 +1,14 @@
 package com.uma.informatica.controllers;
 
-import com.uma.informatica.controllers.beans.DireccionRequestBody;
-import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
-import com.uma.informatica.persistence.models.Alumno;
-import com.uma.informatica.persistence.models.Pfc;
-import com.uma.informatica.persistence.services.AlumnoService;
-import com.uma.informatica.persistence.services.PfcService;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
@@ -18,12 +21,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.uma.informatica.controllers.beans.DireccionRequestBody;
+import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
+import com.uma.informatica.persistence.models.Alumno;
+import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.persistence.services.AlumnoService;
+import com.uma.informatica.persistence.services.PfcService;
+import com.uma.informatica.resources.AlumnoResource;
 
 /**
  * Created by rafaordonez on 16/02/14.
@@ -35,11 +39,11 @@ public class AlumnoControllerRest implements AlumnoController {
     private AlumnoService alumnoService;
     private PfcService pfcService;
 
-    private final ResourceAssembler<Alumno, Resource<Alumno>> alumnoResourceAssembler;
+    private final AlumnoResourceAssembler alumnoResourceAssembler;
     private final ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler;
 
     @Inject
-    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, ResourceAssembler<Alumno, Resource<Alumno>> alumnoResourceAssembler, ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler) {
+    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, AlumnoResourceAssembler alumnoResourceAssembler, ResourceAssembler<Pfc, Resource<Pfc>> pfcResourceAssembler) {
         this.alumnoService = alumnoService;
         this.pfcService = pfcService;
         this.alumnoResourceAssembler = alumnoResourceAssembler;
@@ -48,30 +52,34 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public ResponseEntity<Resources<Resource<Alumno>>> getAlumnos() {
-        return new ResponseEntity<> (Resources.wrap(alumnoService.getAll()), HttpStatus.OK);
+    public ResponseEntity<Resources<AlumnoResource>> getAlumnos() {
+    	
+    	Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoService.getAll()));
+    	alumnosResources.add(linkTo(methodOn(AlumnoControllerRest.class).getAlumnos()).withSelfRel());
+    	
+        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
 
     @Override
-    public ResponseEntity<Resource<Alumno>> getAlumno(@PathVariable long alumnoId) {
+    public ResponseEntity<AlumnoResource> getAlumno(@PathVariable long alumnoId) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.findById(alumnoId)), HttpStatus.OK);
     }
 
 
     @Override
-    public ResponseEntity<Resource<Alumno>> createAlumno(@Valid @RequestBody Alumno alumno) {
+    public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<Resource<Alumno>> removeAlumno(@PathVariable long alumnoId) {
+    public ResponseEntity<AlumnoResource> removeAlumno(@PathVariable long alumnoId) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.deleteAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 
 
     @Override
-    public ResponseEntity<Resources<Resource<Alumno>>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
+    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
         List<Alumno> alumnoList = new ArrayList<>();
         if (search.getDni() != null) {
             alumnoList.add(alumnoService.findByDni(search.getDni()));
@@ -84,22 +92,25 @@ public class AlumnoControllerRest implements AlumnoController {
                 alumnoList.addAll(alumnoService.findByNombre(search.getNombre()));
             }
         }
-        return new ResponseEntity<> (Resources.wrap(alumnoList), HttpStatus.OK);
+        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoList));
+    	alumnosResources.add(linkTo(methodOn(AlumnoControllerRest.class).searchAlumnos(search)).withSelfRel());
+    	
+        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
 
     @Override
-    public ResponseEntity<Resource<Alumno>> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
+    public ResponseEntity<AlumnoResource> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateDireccion(alumnoId, direccion.getDomicilio(), direccion.getLocalidad(), direccion.getPais(), direccion.getCodigoPostal())), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Resource<Alumno>> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
+    public ResponseEntity<AlumnoResource> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateEmail(alumnoId, email)), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Resource<Alumno>> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
+    public ResponseEntity<AlumnoResource> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateTelefono(alumnoId, telefono)), HttpStatus.OK);
     }
 
