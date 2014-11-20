@@ -64,6 +64,15 @@ public class AlumnoControllerRestTest {
                 .andDo(MockMvcResultHandlers.print());
     }
     
+    @Test
+    public void findById_AlumnoNoEncontradoException_ShouldRender404View() throws Exception {
+    	mockMvc.perform(get("/alumnos/{alumnoId}", 0L)
+    			.accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+    			.andExpect(status().isNotFound())
+    			//.andExpect(content().encoding("UTF-8"))
+    			.andExpect(jsonPath("$.message", hasToString("alumno#0 was not found")))
+    			.andDo(MockMvcResultHandlers.print());
+    }
 
 
 }
