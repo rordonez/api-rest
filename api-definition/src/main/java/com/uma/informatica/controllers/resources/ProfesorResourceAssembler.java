@@ -5,11 +5,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.stereotype.Component;
 
 import com.uma.informatica.controllers.ProfesorController;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.resources.ProfesorResource;
 
+@Component
 public class ProfesorResourceAssembler extends ResourceAssemblerSupport<Profesor, ProfesorResource>{
 
     private static final String pfcsRel = "pfcs";
