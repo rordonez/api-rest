@@ -1,23 +1,18 @@
 package com.uma.informatica.controllers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.hateoas.Resources;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.resources.AlumnoResource;
 import com.uma.informatica.resources.PfcResource;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by rafaordonez on 02/03/14.
