@@ -5,13 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 
 import javax.persistence.*;
+
+import org.springframework.hateoas.Identifiable;
+
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "profesor")
-public class Profesor {
+public class Profesor implements Identifiable<Long>, Serializable{
 
-    @Id
+	private static final long serialVersionUID = -6839445993695967602L;
+
+	@Id
     @GeneratedValue
     private Long id;
 
