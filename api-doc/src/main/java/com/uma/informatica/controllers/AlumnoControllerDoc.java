@@ -14,12 +14,12 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
@@ -35,7 +35,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 /**
  * Created by rafaordonez on 02/03/14.
  */
-@Controller
+@RestController
 @RequestMapping(value = "/alumnos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AlumnoControllerDoc implements AlumnoController {
 
