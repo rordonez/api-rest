@@ -1,33 +1,55 @@
 package com.uma.informatica.controllers;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.uma.informatica.persistence.models.Pfc;
-import com.uma.informatica.persistence.models.Profesor;
-import com.uma.informatica.persistence.models.enums.EstadoPfc;
-import com.uma.informatica.persistence.models.enums.TitulacionEnum;
-import com.wordnik.swagger.annotations.ApiOperation;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.uma.informatica.controllers.resources.PfcResourceAssembler;
+import com.uma.informatica.controllers.resources.ProfesorResourceAssembler;
+import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.persistence.models.Profesor;
+import com.uma.informatica.persistence.models.enums.EstadoPfc;
+import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import com.uma.informatica.resources.PfcResource;
+import com.uma.informatica.resources.ProfesorResource;
+import com.wordnik.swagger.annotations.ApiOperation;
+
 /**
  * Created by rafaordonez on 05/03/14.
  */
-@Controller
+@RestController
 @RequestMapping(value = "/pfcs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PfcControllerDoc implements PfcController {
 
     private List<Pfc> pfcs = new ArrayList<>();
     private List<Profesor> profesores = new ArrayList<>();
+    
+    private final PfcResourceAssembler pfcResourceAssembler;
+    private final ProfesorResourceAssembler profesorResourceAssembler;
 
-    public PfcControllerDoc() {
+
+    @Inject
+    public PfcControllerDoc(PfcResourceAssembler pfcResourceAssembler, ProfesorResourceAssembler profesorResourceAssembler) {
         profesores.add(new Profesor("23478938L", "Pepe", "Romero Rodríquez", TitulacionEnum.GESTION, "678789434", "example@example.com" ));
         profesores.add(new Profesor("34689324O", "Rafa", "Puente Ramos", TitulacionEnum.SISTEMAS, "657478345", "example2@exmple.com"));
         profesores.add(new Profesor("74567890I", "Fernado", "Camino Rojas", TitulacionEnum.GESTION, "68903432", "example3@example.com"));
@@ -42,20 +64,25 @@ public class PfcControllerDoc implements PfcController {
         pfc.setId(3L);
         pfcs.add(pfc);
 
+        this.pfcResourceAssembler = pfcResourceAssembler;
+        this.profesorResourceAssembler = profesorResourceAssembler;
     }
 
     @Override
     @ApiOperation(value = "Devuelve la lista de todos los Pfc's disponibles")
     @RequestMapping(method = RequestMethod.GET)
-    public List<Pfc> getPfcs() {
-        return pfcs;
+    public ResponseEntity<Resources<PfcResource>> getPfcs() {
+    	Resources<PfcResource> pfcsResources = new Resources<PfcResource>(pfcResourceAssembler.toResources(pfcs));
+    	pfcsResources.add(linkTo(methodOn(PfcController.class).getPfcs()).withSelfRel());
+    	
+        return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 
     @Override
     @ApiOperation(value = "Devuelve la información de un Pfc dado su identificador")
     @RequestMapping(method = RequestMethod.GET, value = "/{pfcId}")
-    public Pfc getPfc(@PathVariable long pfcId) {
-        return findPfcById(pfcId);
+    public ResponseEntity<PfcResource> getPfc(@PathVariable long pfcId) {
+    	return new ResponseEntity<>(pfcResourceAssembler.toResource(findPfcById(pfcId)), HttpStatus.OK);
     }
 
 
@@ -63,14 +90,14 @@ public class PfcControllerDoc implements PfcController {
     @Override
     @ApiOperation(value = "Crea un nuevo Pfc dada toda la información necesaria para su creación")
     @RequestMapping(method = RequestMethod.POST)
-    public Pfc createPfc(@RequestBody Pfc pfc) {
+    public ResponseEntity<PfcResource> createPfc(@RequestBody Pfc pfc) {
         pfc.setId(new Long(pfcs.size()));
         pfcs.add(pfc);
-        return pfc;
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.CREATED);
     }
 
     @Override
-    public List<Pfc> searchPfcs(@RequestParam final String departamento, @RequestParam final String nombre, @RequestParam final EstadoPfc estado) {
+    public ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam final String departamento, @RequestParam final String nombre, @RequestParam final EstadoPfc estado) {
 
         Predicate<Pfc> searchPfc = new Predicate<Pfc>() {
             @Override
@@ -85,40 +112,107 @@ public class PfcControllerDoc implements PfcController {
                 .filter(searchPfc)
                 .toList();
 
-        return founded;
+    	Resources<PfcResource> pfcsResources = new Resources<PfcResource>(pfcResourceAssembler.toResources(founded));
+    	pfcsResources.add(linkTo(methodOn(PfcController.class).getPfcs()).withSelfRel());
+    	
+        return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 
 
     @Override
     @ApiOperation(value = "Borra un Pfc dado su identificador")
     @RequestMapping(method = RequestMethod.DELETE, value = "/{pfcId}")
-    public Pfc removePfc(@PathVariable long pfcId) {
+    public ResponseEntity<PfcResource> removePfc(@PathVariable long pfcId) {
         Pfc pfc = findPfcById(pfcId);
         pfcs.remove(pfc);
-        return pfc;
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.ACCEPTED);
     }
 
     @Override
-    public Pfc updateNombre(@PathVariable long pfcId, @RequestParam String nombre) {
+    public ResponseEntity<PfcResource> updateNombre(@PathVariable long pfcId, @RequestParam String nombre) {
         Pfc pfc = findPfcById(pfcId);
         pfc.setNombre(nombre);
-        return pfc;
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.OK);
     }
 
     @Override
-    public Pfc updateEstado(@PathVariable long pfcId, @RequestParam EstadoPfc estado) {
+    public ResponseEntity<PfcResource> updateEstado(@PathVariable long pfcId, @RequestParam EstadoPfc estado) {
         Pfc pfc = findPfcById(pfcId);
         pfc.setEstado(estado);
-        return pfc;
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.OK);
     }
 
     @Override
-    public Profesor getDirectorAcademico(@PathVariable long pfcId) {
+    public ResponseEntity<ProfesorResource> getDirectorAcademico(@PathVariable long pfcId) {
         Pfc pfc = findPfcById(pfcId);
-        return pfc.getDirectorAcademico();
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(pfc.getDirectorAcademico()), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<PfcResource> updateFechaFin(@PathVariable long pfcId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin) {
+        Pfc pfc = findPfcById(pfcId);
+        pfc.setFechaFin(fechaFin);
+        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.OK);
+    }
 
+    @Override
+    public ResponseEntity<ProfesorResource> changeDirectorAcademico(@PathVariable long pfcId, @RequestBody long profesor) {
+        Pfc pfc = findPfcById(pfcId);
+        Profesor p = findProfesorById(profesor);
+        pfc.setDirectorAcademico(p);
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(p), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Resources<ProfesorResource>> getDirectores(@PathVariable long pfcId) {
+        Pfc pfc = findPfcById(pfcId);
+        
+    	Resources<ProfesorResource> profesoresResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(pfc.getDirectores()));
+    	profesoresResources.add(linkTo(methodOn(PfcController.class).getPfcs()).withSelfRel());
+    	
+        return new ResponseEntity<> (profesoresResources, HttpStatus.OK);
+
+    }
+
+    @Override
+    public ResponseEntity<Resources<ProfesorResource>> addDirectores(@PathVariable long pfcId, @RequestParam List<Long> directores) {
+        Pfc pfc = findPfcById(pfcId);
+
+        List<Profesor> profesorsList = new ArrayList<>();
+        for(Profesor p : profesores) {
+            for(Long id : directores) {
+                if(p.getId().longValue() == id)
+                    profesorsList.add(p);
+            }
+        }
+        pfc.setDirectores(profesorsList);
+        
+    	Resources<ProfesorResource> profesoresResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(pfc.getDirectores()));
+    	profesoresResources.add(linkTo(methodOn(PfcController.class).getPfcs()).withSelfRel());
+    	
+        return new ResponseEntity<> (profesoresResources, HttpStatus.CREATED);
+
+    }
+
+    @Override
+    public ResponseEntity<Resources<ProfesorResource>> deleteDirectores(@PathVariable long pfcId, @RequestParam List<Long> directores) {
+        Pfc pfc = findPfcById(pfcId);
+
+        List<Profesor> profesorsList = new ArrayList<>();
+        for(Profesor p : profesores) {
+            for(Long id : directores) {
+                if(p.getId().longValue() == id)
+                    profesorsList.add(p);
+            }
+        }
+        pfc.getDirectores().removeAll(profesorsList);
+        
+    	Resources<ProfesorResource> profesoresResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(pfc.getDirectores()));
+    	profesoresResources.add(linkTo(methodOn(PfcController.class).getPfcs()).withSelfRel());
+    	
+        return new ResponseEntity<> (profesoresResources, HttpStatus.ACCEPTED);
+    }
+    
     private Pfc findPfcById(long pfcId) {
         Pfc pfcEncontrado = null;
         for (int i = 0; pfcEncontrado == null && i < pfcs.size(); i++) {
@@ -141,56 +235,5 @@ public class PfcControllerDoc implements PfcController {
             i++;
         }
         return profesorEncontrado;
-    }
-
-    @Override
-    public Pfc updateFechaFin(@PathVariable long pfcId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin) {
-        Pfc pfc = findPfcById(pfcId);
-        pfc.setFechaFin(fechaFin);
-        return pfc;
-    }
-
-    @Override
-    public Profesor changeDirectorAcademico(@PathVariable long pfcId, @RequestBody long profesor) {
-        Pfc pfc = findPfcById(pfcId);
-        Profesor p = findProfesorById(profesor);
-        pfc.setDirectorAcademico(p);
-        return p;
-    }
-
-    @Override
-    public List<Profesor> getDirectores(@PathVariable long pfcId) {
-        Pfc pfc = findPfcById(pfcId);
-        return pfc.getDirectores();
-    }
-
-    @Override
-    public List<Profesor> addDirectores(@PathVariable long pfcId, @RequestParam List<Long> directores) {
-        Pfc pfc = findPfcById(pfcId);
-
-        List<Profesor> profesorsList = new ArrayList<>();
-        for(Profesor p : profesores) {
-            for(Long id : directores) {
-                if(p.getId().longValue() == id)
-                    profesorsList.add(p);
-            }
-        }
-        pfc.setDirectores(profesorsList);
-        return pfc.getDirectores();
-    }
-
-    @Override
-    public List<Profesor> deleteDirectores(@PathVariable long pfcId, @RequestParam List<Long> directores) {
-        Pfc pfc = findPfcById(pfcId);
-
-        List<Profesor> profesorsList = new ArrayList<>();
-        for(Profesor p : profesores) {
-            for(Long id : directores) {
-                if(p.getId().longValue() == id)
-                    profesorsList.add(p);
-            }
-        }
-        pfc.getDirectores().removeAll(profesorsList);
-        return pfc.getDirectores();
     }
 }
