@@ -1,24 +1,13 @@
 package com.uma.informatica.persistence.models;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.springframework.hateoas.Identifiable;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import org.springframework.hateoas.Identifiable;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "alumno")
@@ -74,7 +63,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     @Column(name = "email", nullable = false, length = MAX_LONGITUD_EMAIL)
     private String email;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.YYYY_MM_DD, timezone="CET")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.yyyy_MM_dd, timezone="CET")
     @Column(name="fechaNacimiento", nullable = false)
     private Date fechaNacimiento;
 

@@ -1,29 +1,17 @@
 package com.uma.informatica.persistence.models;
 
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.springframework.hateoas.Identifiable;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
+import org.springframework.hateoas.Identifiable;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "pfc")
@@ -45,7 +33,7 @@ public class Pfc implements Identifiable<Long>, Serializable {
     @Column(name = "fechaInicio")
     private Date fechaInicio;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.YYYY_MM_DD, timezone="CET")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.yyyy_MM_dd, timezone="CET")
     @Column(name = "fechaFin")
     private Date fechaFin;
 

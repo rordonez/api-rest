@@ -5,6 +5,6 @@ package com.uma.informatica.core.jackson.date;
  */
 public interface DateFormatPatterns {
     String YYYY_MM_DD_HH_00 = "YYYY-MM-DD";
-    String YYYY_MM_DD = "YYYY-MM-DD";
+    String yyyy_MM_dd = "yyyy-MM-dd";
 
 }
