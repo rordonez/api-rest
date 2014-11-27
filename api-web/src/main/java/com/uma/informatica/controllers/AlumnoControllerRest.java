@@ -86,10 +86,10 @@ public class AlumnoControllerRest implements AlumnoController {
             alumnoList.add(alumnoService.findByDni(search.getDni()));
         }
         else {
-            if (search.getApellidos() != null) {
+            if (search.getApellidos() != null && search.getNombre() != null) {
                 alumnoList.addAll(alumnoService.findByNombreYApellidos(search.getNombre(), search.getApellidos()));
             }
-            else {
+            if(search.getNombre() != null) {
                 alumnoList.addAll(alumnoService.findByNombre(search.getNombre()));
             }
         }

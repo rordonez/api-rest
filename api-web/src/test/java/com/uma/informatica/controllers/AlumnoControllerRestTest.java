@@ -1,26 +1,28 @@
 package com.uma.informatica.controllers;
 
 import com.uma.informatica.config.RestApiAppContext;
-import com.uma.informatica.persistence.models.Alumno;
-import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RestApiAppContext.class})
 @WebAppConfiguration
+@TransactionConfiguration(defaultRollback = true)
 @Transactional
 @ActiveProfiles("test")
 public class AlumnoControllerRestTest {
@@ -40,20 +43,32 @@ public class AlumnoControllerRestTest {
     @Autowired
     WebApplicationContext wac;
 
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
+
+    private MockRestServiceServer mockServer;
+
+    private RestTemplate restTemplate;
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+        converters.add(new StringHttpMessageConverter());
+        converters.add(new MappingJackson2HttpMessageConverter());
+
+        this.restTemplate = new RestTemplate();
+        this.restTemplate.setMessageConverters(converters);
+
+        this.mockServer = MockRestServiceServer.createServer(this.restTemplate);
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
     @Test
     public void testGetAlumnos() throws Exception {
         mockMvc.perform(get("/alumnos")
-        		.accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
-                .andExpect(content().encoding("UTF-8"))
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(7)))
                 .andExpect(jsonPath("$.content[0].id", is(1)))
                 .andExpect(jsonPath("$.content[1].id", is(2)))
@@ -68,51 +83,55 @@ public class AlumnoControllerRestTest {
 
     @Test
     public void createAlumno_ShouldRender201View() throws Exception {
-        Alumno alumno = new Alumno();
-        alumno.setDni("12345678A");
-        alumno.setNombre("Nombre");
-        alumno.setApellidos("Apellidos");
-        alumno.setTitulacion(TitulacionEnum.GESTION);
-        alumno.setDomicilio("Domicilio");
-        alumno.setLocalidad("Localidad");
-        alumno.setPais("Pais");
-        alumno.setTelefono("666666666");
-        alumno.setCodigoPostal("12345");
-        alumno.setEmail("example@org.com");
-        alumno.setFechaNacimiento(new Date());
 
-        mockMvc.perform(put("/alumnos", alumno)
-                .accept(IntegrationTestUtil.APPLICATION_JSON_UTF8)
-                .contentType(IntegrationTestUtil.APPLICATION_JSON_UTF8)
-                .content(IntegrationTestUtil.convertObjectToJsonBytes(alumno)))
+        mockMvc.perform(put("/alumnos")
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .content(mockAlumnoJson()))
 
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(IntegrationTestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(content().encoding("UTF-8"))
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.links", hasSize(1)))
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
                 .andExpect(jsonPath("$.links[0].href", is("http://localhost/alumnos/8")))
                 .andExpect(jsonPath("$.id", is(8)))
-                .andExpect(jsonPath("$.dni", is(alumno.getDni())))
-                .andExpect(jsonPath("$.nombre", is(alumno.getNombre())))
-                .andExpect(jsonPath("$.apellidos", is(alumno.getApellidos())))
-                .andExpect(jsonPath("$.titulacion", is(alumno.getTitulacion().name())))
-                .andExpect(jsonPath("$.domicilio", is(alumno.getDomicilio())))
-                .andExpect(jsonPath("$.localidad", is(alumno.getLocalidad())))
-                .andExpect(jsonPath("$.pais", is(alumno.getPais())))
-                .andExpect(jsonPath("$.telefono", is(alumno.getTelefono())))
-                .andExpect(jsonPath("$.codigoPostal", is(alumno.getCodigoPostal())))
-                .andExpect(jsonPath("$.email", is(alumno.getEmail())))
-                .andExpect(jsonPath("$.fechaNacimiento", is(new SimpleDateFormat("YYYY-MM-DD").format(alumno.getFechaNacimiento()))))
+                .andExpect(jsonPath("$.dni", is("12345678A")))
+                .andExpect(jsonPath("$.nombre", is("Nombre")))
+                .andExpect(jsonPath("$.apellidos", is("Apellidos")))
+                .andExpect(jsonPath("$.titulacion", is("SISTEMAS")))
+                .andExpect(jsonPath("$.domicilio", is("Domicilio")))
+                .andExpect(jsonPath("$.localidad", is("Localidad")))
+                .andExpect(jsonPath("$.pais", is("Pais")))
+                .andExpect(jsonPath("$.telefono", is("666666666")))
+                .andExpect(jsonPath("$.codigoPostal", is("12345")))
+                .andExpect(jsonPath("$.email", is("example@org.com")))
+                .andExpect(jsonPath("$.fechaNacimiento", is("2014-01-29")))
                 .andDo(MockMvcResultHandlers.print());
     }
-    
+
+    @Test
+    public void searchAlumnos_ShouldRender_200() throws Exception {
+        mockMvc.perform(post("/alumnos")
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .content(mockSearchAlumnosFull()))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/alumnos/8")))
+                .andExpect(jsonPath("$.id", is(8)));
+
+
+    }
+
     @Test
     public void findById_AlumnoNoEncontradoException_ShouldRender404View() throws Exception {
     	mockMvc.perform(get("/alumnos/{alumnoId}", 0L)
-    			.accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+    			.accept(IntegrationTestUtil.applicationJsonMediaType))
     			.andExpect(status().isNotFound())
-    			//.andExpect(content().encoding("UTF-8"))
     			.andExpect(jsonPath("$[0].message", is("alumno#0 was not found")))
     			.andDo(MockMvcResultHandlers.print());
     }
@@ -120,7 +139,8 @@ public class AlumnoControllerRestTest {
     @Test
     public void findById_ShouldRender200View() throws Exception {
         mockMvc.perform(get("/alumnos/{alumnoId}", 1L)
-                .accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isOk())
                 .andExpect(content().encoding("UTF-8"))
                 .andExpect(jsonPath("$.dni", hasToString("00000000A")))
@@ -136,7 +156,8 @@ public class AlumnoControllerRestTest {
     @Test
     public void findById_WithoutPfc_ShouldRender200View() throws Exception {
         mockMvc.perform(get("/alumnos/{alumnoId}", 7L)
-                .accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isOk())
                 .andExpect(content().encoding("UTF-8"))
                 .andExpect(jsonPath("$.dni", hasToString("sadg")))
@@ -150,7 +171,8 @@ public class AlumnoControllerRestTest {
     @Test
     public void deleteAlumno_AlumnoNoEncontradoException_ShouldRender404View() throws Exception {
         mockMvc.perform(delete("/alumnos/{alumnoId}", 0L)
-                .accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$[0].message", is("alumno#0 was not found")))
                 .andDo(MockMvcResultHandlers.print());
@@ -159,7 +181,8 @@ public class AlumnoControllerRestTest {
     @Test
     public void deleteAlumno_ShouldRender200View() throws Exception {
         mockMvc.perform(delete("/alumnos/{alumnoId}", 1L)
-                .accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isAccepted())
                 .andExpect(content().encoding("UTF-8"))
                 .andExpect(jsonPath("$.dni", hasToString("00000000A")))
@@ -172,10 +195,34 @@ public class AlumnoControllerRestTest {
                 .andDo(MockMvcResultHandlers.print());
 
         mockMvc.perform(get("/alumnos")
-                .accept(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"))))
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(content().encoding("UTF-8"))
                 .andExpect(jsonPath("$.content", hasSize(6)));
+    }
+
+    private String mockAlumnoJson() {
+        return "{" +
+                "            \"dni\": \"12345678A\"," +
+                "            \"pfc\": null," +
+                "            \"nombre\": \"Nombre\"," +
+                "            \"apellidos\": \"Apellidos\"," +
+                "            \"titulacion\": \"SISTEMAS\"," +
+                "            \"domicilio\": \"Domicilio\"," +
+                "            \"localidad\": \"Localidad\"," +
+                "            \"pais\": \"Pais\"," +
+                "            \"codigoPostal\": \"12345\"," +
+                "            \"telefono\": \"666666666\"," +
+                "            \"email\": \"example@org.com\"," +
+                "            \"fechaNacimiento\": \"2014-01-29\"}";
+    }
+    
+    private String mockSearchAlumnosFull() {
+        return "{" +
+                "            \"dni\": \"12345678A\"," +
+                "            \"nombre\": \"Nombre\"," +
+                "            \"apellidos\": \"Apellidos\"}";
     }
 }
