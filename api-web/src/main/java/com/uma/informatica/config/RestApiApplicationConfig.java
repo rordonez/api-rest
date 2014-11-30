@@ -49,6 +49,7 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
         File uploadDirectory = ServiceContext.CRM_STORAGE_UPLOADS_DIRECTORY;
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
         registration.setMultipartConfig(multipartConfigElement);
+        registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
     }
 
     @Override

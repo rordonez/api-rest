@@ -63,6 +63,12 @@
             <artifactId>aspectjweaver</artifactId>
         </dependency>
 
+        <!-- VALIDATION -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+
         <!-- TESTING DEPENDENCIES -->
         <dependency>
             <groupId>org.hamcrest</groupId>

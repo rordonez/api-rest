@@ -29,7 +29,11 @@ public class JpaAlumnoService implements AlumnoService {
 
     @Override
     public Collection<Alumno> getAll() {
-        return (Collection<Alumno>) alumnoRepository.findAll();
+        Collection<Alumno> alumnos = (Collection<Alumno>) alumnoRepository.findAll();
+        if(alumnos.isEmpty()) {
+            throw new AlumnoNoEncontradoException();
+        }
+        return alumnos;
     }
 
     @Override
@@ -56,6 +60,15 @@ public class JpaAlumnoService implements AlumnoService {
     public List<Alumno> findByPfc(long pfcId) {
         Pfc pfc = this.pfcRepository.findOne(pfcId);
         return this.alumnoRepository.findByPfc(pfc);
+    }
+
+    @Override
+    public Collection<Alumno> search(String dni, String nombre, String apellidos) {
+        Collection<Alumno> alumnos = this.alumnoRepository.search(dni, nombre, apellidos);
+        if (alumnos.isEmpty()) {
+            throw new AlumnoNoEncontradoException();
+        }
+        return alumnos;
     }
 
     @Override

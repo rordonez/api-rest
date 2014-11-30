@@ -7,14 +7,22 @@ public class AlumnoNoEncontradoException extends RuntimeException {
 
 	private static final long serialVersionUID = -3542924270370931418L;
 
+    public AlumnoNoEncontradoException() {
+        super("No se encontró ningún alumno");
+    }
+
+    public AlumnoNoEncontradoException(String msg) {
+        super(msg);
+    }
+
 	public AlumnoNoEncontradoException(long alumnoId) {
-        super("alumno#" + alumnoId + " was not found");
+        super("No se encontró ningún alumno con id: " + alumnoId);
         this.alumnoId = alumnoId;
     }
 
-    private long alumnoId;
+    private Long alumnoId;
 
-    public long getAlumnoId() {
+    public Long getAlumnoId() {
         return alumnoId;
     }
 

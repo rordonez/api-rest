@@ -7,18 +7,18 @@ public class AlumnoSinPfcException extends RuntimeException {
 
 	private static final long serialVersionUID = -8110431524359273613L;
 
-	private long alumnoId;
+	private Long alumnoId;
 
-    public AlumnoSinPfcException(long alumnoId) {
+    public AlumnoSinPfcException(Long alumnoId) {
         super("Alumno: " + alumnoId + " no tiene Pfc asignado");
         this.alumnoId = alumnoId;
     }
 
-    public long getAlumnoId() {
+    public Long getAlumnoId() {
         return alumnoId;
     }
 
-    public void setAlumnoId(long alumnoId) {
+    public void setAlumnoId(Long alumnoId) {
         this.alumnoId = alumnoId;
     }
 }

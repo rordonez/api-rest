@@ -6,6 +6,7 @@ import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -28,6 +29,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     @Column(name = "dni", unique = true, nullable = false, length = 9)
     private String dni;
 
@@ -35,34 +37,44 @@ public class Alumno implements Identifiable<Long>, Serializable {
     @JoinColumn(name = "pfc")
     private Pfc pfc;
 
+    @NotNull
     @Column(name = "nombre", nullable = false, length = MAX_LONGITUD_NOMBRE)
     private String nombre;
 
+    @NotNull
     @Column(name= "apellidos", nullable = false, length = MAX_LONGITUD_APELLIDOS)
     private String apellidos;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "titulacion", nullable = false, length = TitulacionEnum.MAX_LONGITUD_TITULACION)
     private TitulacionEnum titulacion;
 
+    @NotNull
     @Column(name = "domicilio", nullable = false, length = MAX_LONGITUD_DOMICILIO)
     private String domicilio;
 
+    @NotNull
     @Column(name = "localidad", nullable = false, length = MAX_LONGITUD_LOCALIDAD)
     private String localidad;
 
+    @NotNull
     @Column(name = "pais", nullable = false, length = MAX_LONGITUD_PAIS)
     private String pais;
 
+    @NotNull
     @Column(name = "codigoPostal", nullable = false, length = MAX_LONGITUD_CODIGO_POSTAL)
     private String codigoPostal;
 
+    @NotNull
     @Column(name = "telefono", nullable = false, length = MAX_LONGITUD_TELEFONO)
     private String telefono;
 
+    @NotNull
     @Column(name = "email", nullable = false, length = MAX_LONGITUD_EMAIL)
     private String email;
 
+    @NotNull
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.yyyy_MM_dd, timezone="CET")
     @Column(name="fechaNacimiento", nullable = false)
     private Date fechaNacimiento;

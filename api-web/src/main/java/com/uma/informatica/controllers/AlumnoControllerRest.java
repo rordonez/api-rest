@@ -10,10 +10,13 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
+import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,11 +57,23 @@ public class AlumnoControllerRest implements AlumnoController {
 
     @Override
     public ResponseEntity<Resources<AlumnoResource>> getAlumnos() {
-    	
     	Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoService.getAll()));
     	alumnosResources.add(linkTo(methodOn(AlumnoControllerRest.class).getAlumnos()).withSelfRel());
-    	
+
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
+
+        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos())));
+
+        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
     }
 
 
@@ -69,9 +84,24 @@ public class AlumnoControllerRest implements AlumnoController {
 
 
     @Override
-    public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
+    public ResponseEntity<AlumnoResource> updateAlumno(@PathVariable long alumnoId, @NotNull @Valid @RequestBody UpdateAlumnoBody alumno) {
+        Alumno updatedAlumno = null;
+        if(alumno.getDireccion() != null) {
+            updatedAlumno = alumnoService.updateDireccion(alumnoId, alumno.getDireccion().getDomicilio(), alumno.getDireccion().getLocalidad(), alumno.getDireccion().getPais(), alumno.getDireccion().getCodigoPostal());
+        }
+        if(alumno.getEmail() != null) {
+            updatedAlumno = alumnoService.updateEmail(alumnoId, alumno.getEmail());
+        }
+        if(alumno.getTelefono() != null) {
+            updatedAlumno = alumnoService.updateTelefono(alumnoId, alumno.getTelefono());
+        }
+        if(updatedAlumno == null) {
+            throw new AlumnoNoEncontradoException("No se ha podido actualizar la información del alumno");
+        }
+
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(updatedAlumno), HttpStatus.ACCEPTED);
     }
+
 
     @Override
     public ResponseEntity<AlumnoResource> removeAlumno(@PathVariable long alumnoId) {
@@ -79,41 +109,6 @@ public class AlumnoControllerRest implements AlumnoController {
     }
 
 
-    @Override
-    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
-        List<Alumno> alumnoList = new ArrayList<>();
-        if (search.getDni() != null) {
-            alumnoList.add(alumnoService.findByDni(search.getDni()));
-        }
-        else {
-            if (search.getApellidos() != null && search.getNombre() != null) {
-                alumnoList.addAll(alumnoService.findByNombreYApellidos(search.getNombre(), search.getApellidos()));
-            }
-            if(search.getNombre() != null) {
-                alumnoList.addAll(alumnoService.findByNombre(search.getNombre()));
-            }
-        }
-        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoList));
-    	alumnosResources.add(linkTo(methodOn(AlumnoControllerRest.class).searchAlumnos(search)).withSelfRel());
-    	
-        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
-    }
-
-
-    @Override
-    public ResponseEntity<AlumnoResource> updateDireccion(@PathVariable long alumnoId, @Valid @RequestBody DireccionRequestBody direccion) {
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateDireccion(alumnoId, direccion.getDomicilio(), direccion.getLocalidad(), direccion.getPais(), direccion.getCodigoPostal())), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<AlumnoResource> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateEmail(alumnoId, email)), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<AlumnoResource> updateTelefono(@PathVariable long alumnoId, @NotNull @RequestParam String telefono) {
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.updateTelefono(alumnoId, telefono)), HttpStatus.OK);
-    }
 
     @Override
     public ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId) {

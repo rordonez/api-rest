@@ -88,6 +88,18 @@ public class TestAlumnoService {
     }
 
     @Test
+    public void testSearchWithoutResults() {
+        Collection<Alumno> alumnos = alumnoService.search("325353234A","asd","sdg");
+        assertThat(alumnos, empty());
+    }
+
+    @Test
+    public void testSearch() {
+        Collection<Alumno> alumnos = alumnoService.search("2345E", "Rafa", "ea");
+        assertThat(alumnos, not(empty()));
+    }
+
+    @Test
     public void findAlumnoByNombreTest() {
         Collection<Alumno> alumno = alumnoService.findByNombre("Rafa");
         Assert.assertFalse(alumno.isEmpty());

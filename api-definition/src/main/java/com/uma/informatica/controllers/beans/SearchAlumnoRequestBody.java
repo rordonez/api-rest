@@ -1,5 +1,6 @@
 package com.uma.informatica.controllers.beans;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -9,8 +10,11 @@ public class SearchAlumnoRequestBody implements Serializable {
 
 	private static final long serialVersionUID = -6603009412278928566L;
 
+    @NotNull
 	private String dni;
+    @NotNull
     private String nombre;
+    @NotNull
     private String apellidos;
 
     public String getDni() {

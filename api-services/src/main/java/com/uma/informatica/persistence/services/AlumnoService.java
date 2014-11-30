@@ -19,6 +19,8 @@ public interface AlumnoService {
 
     Collection<Alumno> getAll();
 
+    Collection<Alumno> search(String dni, String nombre, String apellidos);
+
     Collection<Alumno> findByNombre(String nombre);
 
     Collection<Alumno> findByNombreYApellidos(String nombre, String apellidos);
