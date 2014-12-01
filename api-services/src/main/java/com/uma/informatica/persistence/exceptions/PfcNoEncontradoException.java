@@ -7,14 +7,14 @@ public class PfcNoEncontradoException extends RuntimeException {
 
 	private static final long serialVersionUID = 8478840023357207797L;
 
-	private long pfcId;
+	private Long pfcId;
 
     public PfcNoEncontradoException(Long pfcId) {
-        super("pfc#" + pfcId + " was not found");
+        super("No se encontró ningún pfc con id: " + pfcId);
         this.pfcId = pfcId;
     }
 
-    public long getPfcId() {
+    public Long getPfcId() {
         return pfcId;
     }
 }

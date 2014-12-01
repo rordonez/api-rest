@@ -349,7 +349,7 @@ public class AlumnoControllerRestTest {
     }
 
     @Test
-    public void getPfcFromAlumno_ShouldRender_200() throws Exception {
+    public void getPfc_ShouldRender_200() throws Exception {
         Long alumnoId = 1L;
         mockMvc.perform(get("/alumnos/{alumnoId}/pfc", alumnoId)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
@@ -357,17 +357,19 @@ public class AlumnoControllerRestTest {
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
-                .andExpect(jsonPath("$.links", hasSize(2)))
+                .andExpect(jsonPath("$.links", hasSize(3)))
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
                 .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/5")))
                 .andExpect(jsonPath("$.links[1].rel", is("directores")))
                 .andExpect(jsonPath("$.links[1].href", is("http://localhost/pfcs/5/directores")))
+                .andExpect(jsonPath("$.links[2].rel", is("alumno")))
+                .andExpect(jsonPath("$.links[2].href", is("http://localhost/alumnos/1")))
                 .andExpect(jsonPath("$.id", is(5)));
     }
 
 
     @Test
-    public void getPfcFromAlumno_AlumnoNoEncontradoException_ShouldRender_404() throws Exception {
+    public void getPfc_AlumnoNoEncontradoException_ShouldRender_404() throws Exception {
         Long alumnoId = 10L;
         mockMvc.perform(get("/alumnos/{alumnoId}/pfc", alumnoId)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
@@ -385,7 +387,7 @@ public class AlumnoControllerRestTest {
 
 
     @Test
-    public void getPfcFromAlumno_AlumnoSinPfcException_ShouldRender_404() throws Exception {
+    public void getPfc_AlumnoSinPfcException_ShouldRender_404() throws Exception {
         Long alumnoId = 7L;
         mockMvc.perform(get("/alumnos/{alumnoId}/pfc", alumnoId)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
@@ -398,7 +400,113 @@ public class AlumnoControllerRestTest {
                 .andExpect(jsonPath("$[0].message", is("Alumno: " + alumnoId +" no tiene Pfc asignado")))
                 .andExpect(jsonPath("$[0].logref", is(alumnoId.toString())))
                 .andExpect(jsonPath("$[0].links", hasSize(0)));
+    }
 
+
+    @Test
+    public void addPfc_AlumnoNoEncontradoException_ShouldRender_404() throws Exception{
+        Long alumnoId = 10L;
+        Long pfcId = 1L;
+        mockMvc.perform(post("/alumnos/{alumnoId}/pfc/{pfcId}", alumnoId, pfcId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún alumno con id: " + alumnoId)))
+                .andExpect(jsonPath("$[0].logref", is(alumnoId.toString())))
+                .andExpect(jsonPath("$[0].links", hasSize(0)));
+    }
+
+
+    @Test
+    public void addPfc_PfcNoEncontradoException_ShouldRender_404() throws Exception{
+        Long alumnoId = 1L;
+        Long pfcId = 10L;
+        mockMvc.perform(post("/alumnos/{alumnoId}/pfc/{pfcId}", alumnoId, pfcId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: " + pfcId)))
+                .andExpect(jsonPath("$[0].logref", is(pfcId.toString())))
+                .andExpect(jsonPath("$[0].links", hasSize(0)));
+    }
+
+    @Test
+    public void addPfc_ShouldRender200() throws Exception{
+        Long alumnoId = 1L;
+        Long pfcId = 1L;
+        mockMvc.perform(post("/alumnos/{alumnoId}/pfc/{pfcId}", alumnoId, pfcId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(3)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")))
+                .andExpect(jsonPath("$.links[1].rel", is("directores")))
+                .andExpect(jsonPath("$.links[1].href", is("http://localhost/pfcs/1/directores")))
+                .andExpect(jsonPath("$.links[2].rel", is("alumno")))
+                .andExpect(jsonPath("$.links[2].href", is("http://localhost/alumnos/1")))
+                .andExpect(jsonPath("$.id", is(pfcId.intValue())));
+    }
+
+
+
+    @Test
+    public void deletePfc_ShouldRender200() throws Exception{
+        Long alumnoId = 1L;
+        mockMvc.perform(delete("/alumnos/{alumnoId}/pfc", alumnoId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(3)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/5")))
+                .andExpect(jsonPath("$.links[1].rel", is("directores")))
+                .andExpect(jsonPath("$.links[1].href", is("http://localhost/pfcs/5/directores")))
+                .andExpect(jsonPath("$.links[2].rel", is("alumno")))
+                .andExpect(jsonPath("$.links[2].href", is("http://localhost/alumnos/1")))
+                .andExpect(jsonPath("$.id", is(5)));
+    }
+
+
+    @Test
+    public void deletePfc_AlumnoNoEncontradoException_ShouldRender_404() throws Exception{
+        Long alumnoId = 10L;
+        mockMvc.perform(delete("/alumnos/{alumnoId}/pfc", alumnoId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún alumno con id: " + alumnoId)))
+                .andExpect(jsonPath("$[0].logref", is(alumnoId.toString())))
+                .andExpect(jsonPath("$[0].links", hasSize(0)));
+    }
+
+
+    @Test
+    public void deletePfc_AlumnoSinPfcException_ShouldRender_404() throws Exception {
+        Long alumnoId = 7L;
+        mockMvc.perform(delete("/alumnos/{alumnoId}/pfc", alumnoId)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("Alumno: " + alumnoId +" no tiene Pfc asignado")))
+                .andExpect(jsonPath("$[0].logref", is(alumnoId.toString())))
+                .andExpect(jsonPath("$[0].links", hasSize(0)));
     }
 
 

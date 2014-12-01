@@ -3,7 +3,6 @@ package com.uma.informatica.controllers;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
 import com.uma.informatica.persistence.models.Alumno;
-import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.resources.AlumnoResource;
 import com.uma.informatica.resources.PfcResource;
 import org.springframework.hateoas.Resources;
@@ -51,8 +50,8 @@ public interface AlumnoController {
     ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId);
 
 
-    @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/pfc")
-    ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc);
+    @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/pfc/{pfcId}")
+    ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @PathVariable long pfcId);
 
 
     @RequestMapping (method = RequestMethod.DELETE, value = "/{alumnoId}/pfc")

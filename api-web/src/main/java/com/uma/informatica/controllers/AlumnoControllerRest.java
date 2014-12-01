@@ -112,16 +112,22 @@ public class AlumnoControllerRest implements AlumnoController {
 
     @Override
     public ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId) {
-        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.getPfcFromAlumno(alumnoId)), HttpStatus.OK);
+        PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.getPfcFromAlumno(alumnoId));
+        pfcResource.add(linkTo(methodOn(this.getClass()).getAlumno(alumnoId)).withRel("alumno"));
+        return new ResponseEntity<>(pfcResource, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @Valid @RequestBody Pfc pfc) {
-        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.addPfcToAlumno(alumnoId, pfc.getNombre(), pfc.getDepartamento())), HttpStatus.CREATED);
+    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @PathVariable long pfcId) {
+        PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.addPfcToAlumno(alumnoId, pfcId));
+        pfcResource.add(linkTo(methodOn(getClass()).getAlumno(alumnoId)).withRel("alumno"));
+        return new ResponseEntity<>(pfcResource, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<PfcResource> deletePfc(@PathVariable long alumnoId) {
-        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId)), HttpStatus.ACCEPTED);
+        PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId));
+        pfcResource.add(linkTo(methodOn(this.getClass()).getAlumno(alumnoId)).withRel("alumno"));
+        return new ResponseEntity<>(pfcResource, HttpStatus.ACCEPTED);
     }
 }

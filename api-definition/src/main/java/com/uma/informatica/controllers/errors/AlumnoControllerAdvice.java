@@ -2,6 +2,7 @@ package com.uma.informatica.controllers.errors;
 
 import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.exceptions.AlumnoSinPfcException;
+import com.uma.informatica.persistence.exceptions.PfcNoEncontradoException;
 import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,12 @@ public class AlumnoControllerAdvice {
     @ExceptionHandler(AlumnoNoEncontradoException.class)
     ResponseEntity<VndErrors> userNotFoundException(AlumnoNoEncontradoException e) {
         String logRef = e.getAlumnoId() != null ? e.getAlumnoId().toString() : "0";
+        return error(e, HttpStatus.NOT_FOUND, logRef);
+    }
+
+    @ExceptionHandler(PfcNoEncontradoException.class)
+    ResponseEntity<VndErrors> userNotFoundException(PfcNoEncontradoException e) {
+        String logRef = e.getPfcId() != null ? e.getPfcId().toString() : "0";
         return error(e, HttpStatus.NOT_FOUND, logRef);
     }
 

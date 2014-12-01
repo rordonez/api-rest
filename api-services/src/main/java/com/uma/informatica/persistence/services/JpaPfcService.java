@@ -68,6 +68,18 @@ public class JpaPfcService implements PfcService {
         return this.pfcRepository.findByEstado(estado, new PageRequest(0, 1)).getContent();
     }
 
+    /**
+     * Este método también devuelve aquellos alumnos que no tienen asignado un Pfc en caso de que no encuentre el pfcId
+     *
+     * @param pfcId
+     * @return
+     */
+    @Override
+    public List<Alumno> findByPfc(long pfcId) {
+        Pfc pfc = this.pfcRepository.findOne(pfcId);
+        return this.alumnoRepository.findByPfc(pfc);
+    }
+
     @Override
     public Profesor findByDirectorAcademico(long pfcId) {
         return this.pfcRepository.findByDirectorAcademico(pfcId);
@@ -178,12 +190,15 @@ public class JpaPfcService implements PfcService {
     }
 
     @Override
-    public Pfc addPfcToAlumno(long alumnoId, String nombre, String departamento) {
+    public Pfc addPfcToAlumno(long alumnoId, long pfcId) {
         Alumno alumno = this.alumnoRepository.findOne(alumnoId);
         if(alumno == null) {
             throw new AlumnoNoEncontradoException(alumnoId);
         }
-        Pfc pfc = new Pfc(nombre, departamento);
+        Pfc pfc = this.pfcRepository.findOne(pfcId);
+        if(pfc == null) {
+            throw new PfcNoEncontradoException(pfcId);
+        }
         alumno.setPfc(pfc);
         return this.pfcRepository.save(pfc);
     }
@@ -197,7 +212,7 @@ public class JpaPfcService implements PfcService {
         if(alumno.getPfc() == null) {
             throw new AlumnoSinPfcException(alumnoId);
         }
-        Pfc pfc = this.pfcRepository.findOne(alumno.getPfc().getId());
+        Pfc pfc = alumno.getPfc();
         alumno.setPfc(null);
         this.alumnoRepository.save(alumno);
         this.pfcRepository.delete(pfc.getId());
