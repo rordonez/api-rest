@@ -100,6 +100,23 @@ public class TestPfcService {
         assertThat(pfcs, not(empty()));
     }
 
+    @Test(expected = PfcNoEncontradoException.class)
+    public void testSearchWithNullParameters() {
+        this.pfcService.search(null, null, null);
+    }
+
+    @Test(expected = PfcNoEncontradoException.class)
+    public void testSearchWithoutResults() {
+        this.pfcService.search("Departamento", "Nombre", "ESTADO");
+    }
+
+    @Test
+    public void testSearch() {
+        List<Pfc> pfcs = this.pfcService.search("a", "a", "E");
+        assertThat(pfcs, notNullValue());
+        assertThat(pfcs, hasSize(5));
+    }
+
     @Test
     public void findByNameTest() {
         List<Pfc> pfcs = this.pfcService.findByName("Genoma Humano");

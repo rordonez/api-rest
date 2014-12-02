@@ -66,7 +66,7 @@ public class AlumnoControllerRest implements AlumnoController {
     @Override
     public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
 
-        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos())));
+        Resources<AlumnoResource> alumnosResources = new Resources<>(alumnoResourceAssembler.toResources(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos())));
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }

@@ -1,6 +1,7 @@
 package com.uma.informatica.persistence.repositories;
 
 
+import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
@@ -23,6 +24,9 @@ public interface PfcRepository extends PagingAndSortingRepository<Pfc, Long> {
     List<Pfc> findAll();
 
     Page<Pfc> findByDepartamento(@Param("departamento") String departamento, Pageable pageable);
+
+    @Query(value = "SELECT p from Pfc p where p.departamento like CONCAT('%',:departamento,'%') or p.nombre like CONCAT('%',:nombre,'%') or p.estado like CONCAT('%',:estado,'%')")
+    List<Pfc> search(@Param("departamento") String departamento, @Param("nombre") String nombre, @Param("estado") String estado);
 
 //    Page<Pfc> findByAlumno(@Param("alumnId") String alumnId, Pageable pageable);
 //

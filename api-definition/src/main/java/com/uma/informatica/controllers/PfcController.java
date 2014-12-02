@@ -1,22 +1,17 @@
 package com.uma.informatica.controllers;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.hateoas.Resources;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import com.uma.informatica.resources.PfcResource;
 import com.uma.informatica.resources.ProfesorResource;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rafaordonez on 05/03/14.
@@ -29,12 +24,14 @@ public interface PfcController {
     ResponseEntity<Resources<PfcResource>> getPfcs();
 
 
+    @RequestMapping (method = RequestMethod.GET, params = {"search=true"})
+    ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado);
+
+
     @RequestMapping (method = RequestMethod.PUT)
     ResponseEntity<PfcResource> createPfc(@RequestBody Pfc pfc);
 
 
-    @RequestMapping (method = RequestMethod.GET, value = "/search")
-    ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam String departamento, @RequestParam String nombre, @RequestParam EstadoPfc estado);
 
 
     @RequestMapping (method = RequestMethod.GET, value = "/{pfcId}")

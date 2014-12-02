@@ -9,6 +9,14 @@ public class PfcNoEncontradoException extends RuntimeException {
 
 	private Long pfcId;
 
+    public PfcNoEncontradoException() {
+        this("No se encontró ningún pfc");
+    }
+
+    public PfcNoEncontradoException(String message) {
+        super(message);
+    }
+
     public PfcNoEncontradoException(Long pfcId) {
         super("No se encontró ningún pfc con id: " + pfcId);
         this.pfcId = pfcId;

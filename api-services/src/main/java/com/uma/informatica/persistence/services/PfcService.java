@@ -18,6 +18,8 @@ public interface PfcService {
 
     List<Pfc> findByDepartamento(String departamentoId);
 
+    List<Pfc> search(String departamento, String nombre, String estado);
+
     List<Pfc> findByName(String nombre);
 
     List<Pfc> findByEstado(EstadoPfc estado);

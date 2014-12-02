@@ -58,6 +58,14 @@ public class PfcControllerRest implements PfcController {
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 
+
+    @Override
+    public ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado) {
+    	Resources<PfcResource> pfcsResources = new Resources<>(pfcResourceAssembler.toResources(pfcService.search(departamento, nombre, estado != null ? estado.name() : null)));
+        return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
+    }
+
+    
     @Override
     public ResponseEntity<PfcResource> getPfc(@PathVariable long pfcId) {
     	return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.findById(pfcId)), HttpStatus.OK);
@@ -69,27 +77,6 @@ public class PfcControllerRest implements PfcController {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.createPfc(pfc.getNombre(), pfc.getDepartamento(), pfc.getEstado(), new ArrayList<Long>())), HttpStatus.CREATED);
     }
 
-    @Override
-    public ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam String departamento, @RequestParam String nombre, @RequestParam EstadoPfc estado) {
-
-        List<Pfc> pfcList = new ArrayList<>();
-        if (nombre != null) {
-            pfcList.addAll(pfcService.findByName(nombre));
-        }
-        else {
-            if (departamento != null) {
-                pfcList.addAll(pfcService.findByDepartamento(departamento));
-            }
-            else {
-                pfcList.addAll(pfcService.findByEstado(estado));
-            }
-        }
-    	Resources<PfcResource> pfcsResources = new Resources<PfcResource>(pfcResourceAssembler.toResources(pfcList));
-    	pfcsResources.add(linkTo(methodOn(PfcControllerRest.class).getPfcs()).withSelfRel());
-    	
-        return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
-
-    }
 
 
     @Override

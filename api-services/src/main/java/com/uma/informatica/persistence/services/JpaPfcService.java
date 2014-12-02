@@ -37,7 +37,14 @@ public class JpaPfcService implements PfcService {
         this.profesorRepository = profesorRepository;
     }
 
-
+    @Override
+    public List<Pfc> search(String departamento, String nombre, String estado) {
+        List<Pfc> pfcs = this.pfcRepository.search(departamento, nombre, estado);
+        if(pfcs.isEmpty()) {
+            throw new PfcNoEncontradoException();
+        }
+        return pfcs;
+    }
 
     @Override
     public List<Pfc> findByDepartamento(String departamentoId) {
@@ -55,7 +62,11 @@ public class JpaPfcService implements PfcService {
 
     @Override
     public List<Pfc> getAll() {
-        return this.pfcRepository.findAll();
+        List<Pfc> pfcs = this.pfcRepository.findAll();
+        if(pfcs.isEmpty()) {
+            throw new PfcNoEncontradoException();
+        }
+        return pfcs;
     }
 
     @Override
