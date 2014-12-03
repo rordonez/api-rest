@@ -2,6 +2,7 @@ package com.uma.informatica.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -31,6 +32,7 @@ public class DocWebApplicationInitializer extends AbstractAnnotationConfigDispat
     }
 
     @Configuration
+    @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
     @EnableWebMvc
     @ComponentScan( { "com.uma.informatica.controllers", "com.uma.informatica.config"})
     public static class WebAppConfig extends WebMvcConfigurerAdapter {
