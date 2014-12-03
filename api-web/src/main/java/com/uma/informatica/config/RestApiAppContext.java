@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Import;
  * Created by rafa on 15/06/14.
  */
 @Configuration
-@Import({ServiceContext.class, SocialContext.class, SecurityContext.class, WebAppContext.class, SecurityContextTestProfile.class})
+@Import({ServiceContext.class, SocialContext.class, SecurityContext.class, WebAppContext.class, SecurityContextTestProfile.class, DocWebAppContext.class})
 public class RestApiAppContext {
 }

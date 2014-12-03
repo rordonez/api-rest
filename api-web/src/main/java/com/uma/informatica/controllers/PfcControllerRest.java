@@ -65,7 +65,7 @@ public class PfcControllerRest implements PfcController {
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 
-    
+
     @Override
     public ResponseEntity<PfcResource> getPfc(@PathVariable long pfcId) {
     	return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.findById(pfcId)), HttpStatus.OK);

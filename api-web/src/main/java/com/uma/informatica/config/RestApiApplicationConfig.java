@@ -23,7 +23,11 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
-        servletContext.setInitParameter("spring.profiles.active", "test");
+        String springProfile = System.getProperty("profile.property");
+        if(springProfile == null) {
+            springProfile = "test";
+        }
+        servletContext.setInitParameter("spring.profiles.active", springProfile);
         registerProxyFilter(servletContext, "springSecurityFilterChain");
        // registerProxyFilter(servletContext, "oAuth2AuthenticationProcessingFilter");
     }
