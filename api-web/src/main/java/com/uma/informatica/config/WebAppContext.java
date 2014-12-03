@@ -20,7 +20,7 @@ import java.util.Properties;
 /**
  * Created by rafa on 14/06/14.
  */
-@Profile({"test"})
+@Profile({"test", "production"})
 @ComponentScan({"com.uma.informatica.controllers"})
 @EnableWebMvc
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
