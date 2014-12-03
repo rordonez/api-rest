@@ -14,7 +14,7 @@ import javax.sql.DataSource;
  * Created by rafaordonez on 09/02/14.
  */
 @Configuration
-@Profile({"test"})
+@Profile({"test", "doc"})
 public class EmbeddedDataSourceConfiguration {
 
     @Bean

@@ -294,6 +294,12 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <!-- Swagger Mvc Repository -->
+        <repository>
+            <id>jcenter-release</id>
+            <name>jcenter</name>
+            <url>http://oss.jfrog.org/artifactory/oss-release-local/</url>
+        </repository>
     </repositories>
 
     <build>
