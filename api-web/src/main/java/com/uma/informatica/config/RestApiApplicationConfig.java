@@ -1,12 +1,12 @@
 package com.uma.informatica.config;
 
-import com.uma.informatica.persistence.configuration.ServiceContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.*;
-import java.io.File;
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 /**
  * Initializes the config application. This is a programmatic equivalent to {@literal config.xml}. {@link
@@ -14,11 +14,9 @@ import java.io.File;
  * main {@link org.springframework.context.ApplicationContext application context} instance that powers the Spring MVC
  * application.
  *
- * @author Josh Long
+ * @author Rafa Ordoñez
  */
 public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
-
-    private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -45,15 +43,6 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
-    }
-
-
-    @Override
-    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-        File uploadDirectory = ServiceContext.CRM_STORAGE_UPLOADS_DIRECTORY;
-        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
-        registration.setMultipartConfig(multipartConfigElement);
-        registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
     }
 
     @Override
