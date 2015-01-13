@@ -22,10 +22,12 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -109,6 +111,25 @@ public class PfcControllerRestTest {
                 .andExpect(content().encoding("UTF-8"))
                 .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc")));
 
+    }
+
+    @Test
+    public void createPfc_MethodArgumentNotValidException_ShouldRender400() throws Exception {
+
+        mockMvc.perform(put("/pfcs")
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .locale(new Locale("ES"))
+                .content(mockPfcJsonWithoutDirectores()))
+
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(jsonPath("$.links", hasSize(0)))
+                .andExpect(jsonPath("$.content", hasSize(2)));
+    }
+
+    private String mockPfcJsonWithoutDirectores() {
+        return "{";
     }
 
 
