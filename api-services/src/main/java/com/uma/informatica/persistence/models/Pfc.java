@@ -47,7 +47,7 @@ public class Pfc implements Identifiable<Long>, Serializable {
 
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "PFCS_PROFESORES",
             joinColumns = @JoinColumn(name = "pfc_id"),
             inverseJoinColumns = @JoinColumn(name = "profesor_id"))
