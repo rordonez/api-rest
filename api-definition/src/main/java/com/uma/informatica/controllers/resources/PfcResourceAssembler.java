@@ -1,18 +1,16 @@
 package com.uma.informatica.controllers.resources;
 
 import com.uma.informatica.controllers.PfcController;
-import com.uma.informatica.controllers.resources.exceptions.LinkCreationException;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.resources.PfcResource;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +48,11 @@ public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResou
             pfcResource.add(entityLinks.linkToSingleResource(directorAcademico).withRel(directorAcademicoRel));
         }
         if(directores != null && !directores.isEmpty()) {
-            pfcResource.add(ControllerLinkBuilder.linkTo(PfcController.class).slash(pfcId).slash("directores").withRel(directoresRel));
+            List<Link> directoresLinks = new ArrayList<>();
+            for(Profesor director : directores) {
+                directoresLinks.add(entityLinks.linkToSingleResource(director).withRel(directoresRel));
+            }
+            pfcResource.add(directoresLinks);
         }
 
         return pfcResource;

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,6 +80,14 @@ public class TestPfcService {
 
     }
 
+    @Test
+    public void findByPfcTest() {
+        Collection<Alumno> alumnos = pfcService.findByPfc(1L);
+        assertThat(alumnos, not(empty()));
+        assertThat(alumnos, hasSize(1));
+
+    }
+
     @Test(expected = PfcNoEncontradoException.class)
     public void findByIdTestWithException() {
         this.pfcService.findById(Long.MAX_VALUE);
@@ -89,6 +98,23 @@ public class TestPfcService {
         List<Pfc> pfcs = this.pfcService.getAll();
         assertThat(pfcs, not(nullValue()));
         assertThat(pfcs, not(empty()));
+    }
+
+    @Test(expected = PfcNoEncontradoException.class)
+    public void testSearchWithNullParameters() {
+        this.pfcService.search(null, null, null);
+    }
+
+    @Test(expected = PfcNoEncontradoException.class)
+    public void testSearchWithoutResults() {
+        this.pfcService.search("Departamento", "Nombre", "ESTADO");
+    }
+
+    @Test
+    public void testSearch() {
+        List<Pfc> pfcs = this.pfcService.search("a", "a", "E");
+        assertThat(pfcs, notNullValue());
+        assertThat(pfcs, hasSize(5));
     }
 
     @Test
@@ -234,12 +260,12 @@ public class TestPfcService {
 
     @Test(expected = AlumnoNoEncontradoException.class)
     public void testAddPfcWithoutAlumno() {
-        this.pfcService.addPfcToAlumno(Long.MAX_VALUE, "nombre", "departamento");
+        this.pfcService.addPfcToAlumno(Long.MAX_VALUE, Long.MAX_VALUE);
     }
 
     @Test
     public void testAddPfc() {
-        Pfc pfc = this.pfcService.addPfcToAlumno(1L, "Nuevo proyecto", "Departamento nuevo");
+        Pfc pfc = this.pfcService.addPfcToAlumno(1L, 1L);
         Alumno newAlumno = this.alumnoService.findById(1L);
         Assert.assertThat(pfc, notNullValue());
         Assert.assertThat(newAlumno, notNullValue());

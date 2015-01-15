@@ -39,7 +39,7 @@ public class DBUnitDatasetGenerator {
         queryDataSet.addTable("pfcs_profesores");
         queryDataSet.addTable("alumno");
 
-        OutputStream outputStream = new FileOutputStream(new File(ServiceContext.RESTAPI_STORAGE_DIRECTORY, "dataset.xml"));
+        OutputStream outputStream = new FileOutputStream(new File("/restapi", "dataset.xml"));
 
         FlatXmlDataSet.write(queryDataSet, outputStream);
 

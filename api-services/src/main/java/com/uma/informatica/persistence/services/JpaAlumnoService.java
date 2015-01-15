@@ -2,7 +2,6 @@ package com.uma.informatica.persistence.services;
 
 import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
-import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.AlumnoRepository;
 import com.uma.informatica.persistence.repositories.PfcRepository;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional
@@ -50,17 +48,7 @@ public class JpaAlumnoService implements AlumnoService {
         return this.alumnoRepository.findByDni(dni);
     }
 
-    /**
-     * Este método también devuelve aquellos alumnos que no tienen asignado un Pfc en caso de que no encuentre el pfcId
-     *
-     * @param pfcId
-     * @return
-     */
-    @Override
-    public List<Alumno> findByPfc(long pfcId) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        return this.alumnoRepository.findByPfc(pfc);
-    }
+
 
     @Override
     public Collection<Alumno> search(String dni, String nombre, String apellidos) {

@@ -19,14 +19,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.servlet.ServletException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by rafa on 05/07/14.
@@ -57,15 +49,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                 .roles("USER");
     }
 
-    @Bean
-    public FilterChainProxy springSecurityFilterChain()
-            throws ServletException, Exception {
 
-        List<SecurityFilterChain> securityFilterChains = new ArrayList<SecurityFilterChain>();
-        securityFilterChains.add(new DefaultSecurityFilterChain(
-                new AntPathRequestMatcher("/**")));
-        return new FilterChainProxy(securityFilterChains);
-    }
 
     @Override
     @Bean
@@ -80,6 +64,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
         return Encryptors.noOpText();
     }
 
+    @Profile({"production"})
     @Configuration
     @EnableResourceServer
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
@@ -107,6 +92,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
 
     }
 
+    @Profile({"production"})
     @Configuration
     @EnableAuthorizationServer
     protected static class AuthorizationServerConfiguration extends

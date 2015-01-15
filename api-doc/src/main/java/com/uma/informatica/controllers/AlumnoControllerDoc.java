@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,11 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
+import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
 import com.uma.informatica.controllers.resources.AlumnoResourceAssembler;
 import com.uma.informatica.controllers.resources.PfcResourceAssembler;
 import com.uma.informatica.persistence.models.Alumno;
@@ -37,6 +36,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
  * Created by rafaordonez on 02/03/14.
  */
 @RestController
+@ExposesResourceFor(Alumno.class)
 @RequestMapping(value = "/alumnos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AlumnoControllerDoc implements AlumnoController {
 
@@ -130,31 +130,31 @@ public class AlumnoControllerDoc implements AlumnoController {
 
 
 
-    @Override
-    @ApiOperation(value = "Actualiza la dirección de un determinado alumno dado su identificador")
-    @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/direccion")
-    public ResponseEntity<AlumnoResource> updateDireccion(@PathVariable long alumnoId, @NotNull @RequestBody DireccionRequestBody direccion) {
-        Alumno alumno = findAlumnoById(alumnoId);
-        alumno.setDomicilio(direccion.getDomicilio());
-        alumno.setLocalidad(direccion.getLocalidad());
-        alumno.setPais(direccion.getPais());
-        alumno.setCodigoPostal(direccion.getCodigoPostal());
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<AlumnoResource> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
-        Alumno alumno = findAlumnoById(alumnoId);
-        alumno.setEmail(email);
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<AlumnoResource> updateTelefono(@PathVariable long alumnoId, @RequestParam String telefono) {
-        Alumno alumno = findAlumnoById(alumnoId);
-        alumno.setTelefono(telefono);
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
-    }
+//    @Override
+//    @ApiOperation(value = "Actualiza la dirección de un determinado alumno dado su identificador")
+//    @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/direccion")
+//    public ResponseEntity<AlumnoResource> updateDireccion(@PathVariable long alumnoId, @NotNull @RequestBody DireccionRequestBody direccion) {
+//        Alumno alumno = findAlumnoById(alumnoId);
+//        alumno.setDomicilio(direccion.getDomicilio());
+//        alumno.setLocalidad(direccion.getLocalidad());
+//        alumno.setPais(direccion.getPais());
+//        alumno.setCodigoPostal(direccion.getCodigoPostal());
+//        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
+//    }
+//
+//    @Override
+//    public ResponseEntity<AlumnoResource> updateEmail(@PathVariable long alumnoId, @NotNull @RequestParam String email) {
+//        Alumno alumno = findAlumnoById(alumnoId);
+//        alumno.setEmail(email);
+//        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
+//    }
+//
+//    @Override
+//    public ResponseEntity<AlumnoResource> updateTelefono(@PathVariable long alumnoId, @RequestParam String telefono) {
+//        Alumno alumno = findAlumnoById(alumnoId);
+//        alumno.setTelefono(telefono);
+//        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.OK);
+//    }
 
     @Override
     public ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId) {
@@ -162,11 +162,22 @@ public class AlumnoControllerDoc implements AlumnoController {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(alumno.getPfc()), HttpStatus.OK);
     }
 
+//    @Override
+//    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @RequestBody Pfc pfc) {
+//        Alumno alumno = findAlumnoById(alumnoId);
+//        alumno.setPfc(pfc);
+//        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.CREATED);
+//    }
+
+
     @Override
-    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @RequestBody Pfc pfc) {
-        Alumno alumno = findAlumnoById(alumnoId);
-        alumno.setPfc(pfc);
-        return new ResponseEntity<>(pfcResourceAssembler.toResource(pfc), HttpStatus.CREATED);
+    public ResponseEntity<AlumnoResource> updateAlumno(@PathVariable long alumnoId, @Valid @RequestBody UpdateAlumnoBody alumno) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @PathVariable long pfcId) {
+        return null;
     }
 
     @Override

@@ -37,7 +37,14 @@ public class JpaPfcService implements PfcService {
         this.profesorRepository = profesorRepository;
     }
 
-
+    @Override
+    public List<Pfc> search(String departamento, String nombre, String estado) {
+        List<Pfc> pfcs = this.pfcRepository.search(departamento, nombre, estado);
+        if(pfcs.isEmpty()) {
+            throw new PfcNoEncontradoException();
+        }
+        return pfcs;
+    }
 
     @Override
     public List<Pfc> findByDepartamento(String departamentoId) {
@@ -55,7 +62,11 @@ public class JpaPfcService implements PfcService {
 
     @Override
     public List<Pfc> getAll() {
-        return this.pfcRepository.findAll();
+        List<Pfc> pfcs = this.pfcRepository.findAll();
+        if(pfcs.isEmpty()) {
+            throw new PfcNoEncontradoException();
+        }
+        return pfcs;
     }
 
     @Override
@@ -66,6 +77,18 @@ public class JpaPfcService implements PfcService {
     @Override
     public List<Pfc> findByEstado(EstadoPfc estado) {
         return this.pfcRepository.findByEstado(estado, new PageRequest(0, 1)).getContent();
+    }
+
+    /**
+     * Este método también devuelve aquellos alumnos que no tienen asignado un Pfc en caso de que no encuentre el pfcId
+     *
+     * @param pfcId
+     * @return
+     */
+    @Override
+    public List<Alumno> findByPfc(long pfcId) {
+        Pfc pfc = this.pfcRepository.findOne(pfcId);
+        return this.alumnoRepository.findByPfc(pfc);
     }
 
     @Override
@@ -178,12 +201,15 @@ public class JpaPfcService implements PfcService {
     }
 
     @Override
-    public Pfc addPfcToAlumno(long alumnoId, String nombre, String departamento) {
+    public Pfc addPfcToAlumno(long alumnoId, long pfcId) {
         Alumno alumno = this.alumnoRepository.findOne(alumnoId);
         if(alumno == null) {
             throw new AlumnoNoEncontradoException(alumnoId);
         }
-        Pfc pfc = new Pfc(nombre, departamento);
+        Pfc pfc = this.pfcRepository.findOne(pfcId);
+        if(pfc == null) {
+            throw new PfcNoEncontradoException(pfcId);
+        }
         alumno.setPfc(pfc);
         return this.pfcRepository.save(pfc);
     }
@@ -197,7 +223,7 @@ public class JpaPfcService implements PfcService {
         if(alumno.getPfc() == null) {
             throw new AlumnoSinPfcException(alumnoId);
         }
-        Pfc pfc = this.pfcRepository.findOne(alumno.getPfc().getId());
+        Pfc pfc = alumno.getPfc();
         alumno.setPfc(null);
         this.alumnoRepository.save(alumno);
         this.pfcRepository.delete(pfc.getId());

@@ -1,27 +1,5 @@
 package com.uma.informatica.controllers;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.hateoas.Resources;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.uma.informatica.controllers.resources.PfcResourceAssembler;
@@ -33,11 +11,28 @@ import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.resources.PfcResource;
 import com.uma.informatica.resources.ProfesorResource;
 import com.wordnik.swagger.annotations.ApiOperation;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by rafaordonez on 05/03/14.
  */
 @RestController
+@ExposesResourceFor(Pfc.class)
 @RequestMapping(value = "/pfcs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PfcControllerDoc implements PfcController {
 

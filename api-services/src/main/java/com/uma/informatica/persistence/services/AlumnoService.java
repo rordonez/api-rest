@@ -6,12 +6,9 @@ import com.uma.informatica.persistence.models.Alumno;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 
 public interface AlumnoService {
-
-    List<Alumno> findByPfc(long pfcId);
 
     Alumno findById(long alumnoId) throws AlumnoNoEncontradoException;
 

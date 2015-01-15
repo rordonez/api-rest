@@ -15,8 +15,8 @@ import java.sql.Driver;
  * Created by rafaordonez on 04/02/14.
  */
 
-@Configuration
 @Profile({"production"})
+@Configuration
 public class ProductionDataSourceConfiguration {
 
     @Bean

@@ -1,10 +1,7 @@
 package com.uma.informatica.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
@@ -18,6 +15,8 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.connect.web.ConnectController;
+import org.springframework.social.twitter.api.Twitter;
+import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.social.twitter.connect.TwitterConnectionFactory;
 
 import javax.sql.DataSource;
@@ -26,6 +25,8 @@ import javax.sql.DataSource;
  * Created by rafa on 15/06/14.
  */
 @Profile({"production"})
+@PropertySource( value = "classpath:social.properties" )
+@Configuration
 @EnableSocial
 //@EnableJdbcConnectionRepository
 public class SocialContext implements SocialConfigurer {
@@ -35,6 +36,8 @@ public class SocialContext implements SocialConfigurer {
 
     @Autowired
     Environment environment;
+
+
 
     @Override
     public void addConnectionFactories(ConnectionFactoryConfigurer cfConfig, Environment env) {
@@ -74,6 +77,11 @@ public class SocialContext implements SocialConfigurer {
     @Bean
     public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
         return new ConnectController(connectionFactoryLocator, connectionRepository);
+    }
+
+    @Bean
+    public Twitter twitterTemplate() {
+        return new TwitterTemplate(environment.getProperty("twitter.consumerKey"), environment.getProperty("twitter.consumerSecret"));
     }
 
 

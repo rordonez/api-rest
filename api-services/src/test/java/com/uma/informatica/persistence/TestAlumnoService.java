@@ -67,16 +67,6 @@ public class TestAlumnoService {
         this.alumnoService.findById(Long.MAX_VALUE);
     }
 
-    @Test
-    public void findByPfcTest() {
-        Collection<Alumno> alumnos = alumnoService.findByPfc(1L);
-        assertThat(alumnos, not(empty()));
-
-        alumnos = alumnoService.findByPfc(8L);
-        assertThat(alumnos,contains(
-                hasProperty("pfc", is(nullValue())))
-        );
-    }
 
     @Test
     public void findByDniTest() {

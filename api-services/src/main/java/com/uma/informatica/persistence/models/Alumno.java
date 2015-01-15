@@ -1,6 +1,7 @@
 package com.uma.informatica.persistence.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import org.springframework.hateoas.Identifiable;
@@ -33,6 +34,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     @Column(name = "dni", unique = true, nullable = false, length = 9)
     private String dni;
 
+    @JsonIgnore
     @ManyToOne( cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "pfc")
     private Pfc pfc;

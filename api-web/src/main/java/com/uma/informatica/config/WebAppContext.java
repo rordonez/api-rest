@@ -2,6 +2,7 @@ package com.uma.informatica.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
@@ -19,6 +20,7 @@ import java.util.Properties;
 /**
  * Created by rafa on 14/06/14.
  */
+@Profile({"test", "production"})
 @ComponentScan({"com.uma.informatica.controllers"})
 @EnableWebMvc
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)

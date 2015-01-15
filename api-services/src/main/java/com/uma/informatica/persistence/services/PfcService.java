@@ -1,5 +1,6 @@
 package com.uma.informatica.persistence.services;
 
+import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
@@ -17,6 +18,8 @@ public interface PfcService {
 
     List<Pfc> findByDepartamento(String departamentoId);
 
+    List<Pfc> search(String departamento, String nombre, String estado);
+
     List<Pfc> findByName(String nombre);
 
     List<Pfc> findByEstado(EstadoPfc estado);
@@ -24,6 +27,8 @@ public interface PfcService {
     List<Pfc> getAll();
 
     Profesor findByDirectorAcademico(long pfcId);
+
+    List<Alumno> findByPfc(long pfcId);
 
     @Query("SELECT p FROM Profesor p INNER JOIN b.categories c WHERE c IN (:categories)")
     List<Profesor> findByDirector(long pfcId);
@@ -44,7 +49,7 @@ public interface PfcService {
 
     Pfc getPfcFromAlumno(long alumnoId);
 
-    Pfc addPfcToAlumno(long alumnoId, String nombre, String departamento);
+    Pfc addPfcToAlumno(long alumnoId, long pfcId);
 
     Pfc deletePfcFromAlumno(long alumnoId);
 

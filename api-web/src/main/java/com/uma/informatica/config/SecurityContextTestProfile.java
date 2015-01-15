@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by rafa on 12/10/14.
  */
-@Profile({"test"})
+@Profile({"test", "doc"})
 @Configuration
 public class SecurityContextTestProfile {
 
