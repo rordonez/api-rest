@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.hateoas.Resources;
@@ -74,8 +75,39 @@ public class AlumnoControllerDoc implements AlumnoController {
     	
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);        
     }
+    
+    
+    @Override
+    @ApiOperation(value = "Realiza una busqueda sobre alumnos")
+    @RequestMapping (method = RequestMethod.POST)
+    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
+        List<Alumno> alumnosEncontrados = new ArrayList<>();
+        if(search.getDni() != null) {
+            alumnosEncontrados.add(findAlumnosByDni(search.getDni()));
+        }
+
+        if (search.getApellidos() != null) {
+            alumnosEncontrados.addAll(findAlumnosByApellidos(search.getNombre(), search.getApellidos()));
+        }
+        if (search.getNombre() != null) {
+            alumnosEncontrados.addAll(findAlumnosByNombre(search.getNombre()));
+        }
+        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnosEncontrados));
+
+        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
+    }
 
 
+    @Override
+    @ApiOperation(value = "Crea un alumno con la información del alumno")
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
+        alumno.setId(new Long(alumnos.size()));
+        alumnos.add(alumno);
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.CREATED);
+    }
+    
+    
     @Override
     @ApiOperation(value = "Devuelve un alumno dado su identificador")
     @RequestMapping(value = "/{alumnoId}", method = RequestMethod.GET)
@@ -84,14 +116,7 @@ public class AlumnoControllerDoc implements AlumnoController {
     }
 
 
-    @Override
-    @ApiOperation(value = "Crea un alumno con la información del alumno")
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<AlumnoResource> createAlumno(@RequestBody Alumno alumno) {
-        alumno.setId(new Long(alumnos.size()));
-        alumnos.add(alumno);
-        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.CREATED);
-    }
+
 
     @Override
     @ApiOperation(value = "Borrar el alumno dado su identificador")
@@ -102,27 +127,7 @@ public class AlumnoControllerDoc implements AlumnoController {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumno), HttpStatus.ACCEPTED);
     }
 
-    @Override
-    @ApiOperation(value = "Realiza una busqueda sobre alumnos")
-    @RequestMapping (method = RequestMethod.POST)
-    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@NotNull @RequestBody SearchAlumnoRequestBody search) {
-        List<Alumno> alumnosEncontrados = new ArrayList<>();
-        if(search.getDni() != null) {
-            alumnosEncontrados.add(findAlumnosByDni(search.getDni()));
-        }
-        else {
-            if (search.getApellidos() != null) {
-                alumnosEncontrados.addAll(findAlumnosByApellidos(search.getNombre(), search.getApellidos()));
-            }
-            else {
-                alumnosEncontrados.addAll(findAlumnosByNombre(search.getNombre()));
-            }
-        }
-        Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnosEncontrados));
-    	alumnosResources.add(linkTo(methodOn(AlumnoController.class).searchAlumnos(search)).withSelfRel());
-    	
-        return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
-    }
+
 
 
     @Override
@@ -186,7 +191,7 @@ public class AlumnoControllerDoc implements AlumnoController {
     private List<Alumno> findAlumnosByNombre(String nombre) {
         List<Alumno> alumnosEncontrados = new ArrayList<>();
         for (Alumno alumno : alumnos) {
-            if(alumno.getNombre().equals(nombre)) {
+            if(alumno.getNombre().contains(nombre)) {
                 alumnosEncontrados.add(alumno);
             }
         }
@@ -196,7 +201,7 @@ public class AlumnoControllerDoc implements AlumnoController {
     private List<Alumno> findAlumnosByApellidos(String nombre, String apellidos) {
         List<Alumno> alumnosEncontrados = new ArrayList<>();
         for (Alumno alumno : alumnos) {
-            if (nombre.equals(alumno.getNombre()) && apellidos.equals(alumno.getApellidos())) {
+            if (nombre.contains(alumno.getNombre()) && apellidos.contains(alumno.getApellidos())) {
                 alumnosEncontrados.add(alumno);
             }
         }
@@ -206,7 +211,7 @@ public class AlumnoControllerDoc implements AlumnoController {
     private Alumno findAlumnosByDni(String dni) {
         Alumno alumnoEncontrado = null;
         for (Alumno alumno : alumnos) {
-            if (alumno.getDni().equals(dni)) {
+            if (alumno.getDni().contains(dni)) {
                 alumnoEncontrado = alumno;
             }
         }

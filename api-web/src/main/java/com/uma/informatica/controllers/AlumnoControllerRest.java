@@ -3,29 +3,23 @@ package com.uma.informatica.controllers;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
-import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uma.informatica.controllers.beans.DireccionRequestBody;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
+import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
 import com.uma.informatica.controllers.resources.AlumnoResourceAssembler;
 import com.uma.informatica.controllers.resources.PfcResourceAssembler;
+import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.services.AlumnoService;
