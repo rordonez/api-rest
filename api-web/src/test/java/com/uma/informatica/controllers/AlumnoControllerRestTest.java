@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -55,20 +56,11 @@ public class AlumnoControllerRestTest {
 
     private MockMvc mockMvc;
 
-    private MockRestServiceServer mockServer;
-
     private RestTemplate restTemplate;
 
     @Before
     public void setUp() {
-        List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
-        converters.add(new StringHttpMessageConverter());
-        converters.add(new MappingJackson2HttpMessageConverter());
 
-        this.restTemplate = new RestTemplate();
-        this.restTemplate.setMessageConverters(converters);
-
-        this.mockServer = MockRestServiceServer.createServer(this.restTemplate);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
@@ -361,11 +353,12 @@ public class AlumnoControllerRestTest {
     public void getPfc_ShouldRender_200() throws Exception {
         Long alumnoId = 1L;
         mockMvc.perform(get("/alumnos/{alumnoId}/pfc", alumnoId)
-                .contentType(IntegrationTestUtil.applicationJsonMediaType)
-                .accept(IntegrationTestUtil.applicationJsonMediaType))
+                .contentType(MediaTypes.HAL_JSON)
+                		
+                .accept(MediaTypes.HAL_JSON))
 
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(content().contentType(MediaTypes.HAL_JSON))
                 .andExpect(jsonPath("$.links", hasSize(3)))
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
                 .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/5")))
@@ -459,7 +452,7 @@ public class AlumnoControllerRestTest {
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
                 .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")))
                 .andExpect(jsonPath("$.links[1].rel", is("directores")))
-                .andExpect(jsonPath("$.links[1].href", is("http://localhost/pfcs/1/directores")))
+                .andExpect(jsonPath("$.links[1].href", is("http://localhost/profesores/1")))
                 .andExpect(jsonPath("$.links[2].rel", is("alumno")))
                 .andExpect(jsonPath("$.links[2].href", is("http://localhost/alumnos/1")))
                 .andExpect(jsonPath("$.id", is(pfcId.intValue())));

@@ -36,9 +36,7 @@ public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResou
         List<Profesor> directores = pfc.getDirectores();
 
 
-        long pfcId = pfc.getId();
-
-        pfc.setDirectores(null);
+//        pfc.setDirectores(null);
         pfc.setDirectorAcademico(null);
 
         PfcResource pfcResource = new PfcResource(pfc);
@@ -47,13 +45,13 @@ public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResou
         if(directorAcademico != null) {
             pfcResource.add(entityLinks.linkToSingleResource(directorAcademico).withRel(directorAcademicoRel));
         }
-        if(directores != null && !directores.isEmpty()) {
-            List<Link> directoresLinks = new ArrayList<>();
-            for(Profesor director : directores) {
-                directoresLinks.add(entityLinks.linkToSingleResource(director).withRel(directoresRel));
-            }
-            pfcResource.add(directoresLinks);
-        }
+//        if(directores != null && !directores.isEmpty()) {
+//            List<Link> directoresLinks = new ArrayList<>();
+//            for(Profesor director : directores) {
+//                directoresLinks.add(entityLinks.linkToSingleResource(director).withRel(directoresRel));
+//            }
+//            pfcResource.add(directoresLinks);
+//        }
 
         return pfcResource;
     }

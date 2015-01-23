@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +36,7 @@ import com.wordnik.swagger.annotations.Api;
 @ExposesResourceFor(Alumno.class)
 @RestController
 @Api(value = "alumnos", description = "Api para Alumnos")
-@RequestMapping(value = "/alumnos", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/alumnos")
 public class AlumnoControllerRest  {
 
     private AlumnoService alumnoService;
@@ -110,7 +109,7 @@ public class AlumnoControllerRest  {
 
 
 
-    @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}/pfc")
+    @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}/pfc", produces = {"application/hal+json"})
     public ResponseEntity<PfcResource> getPfc(@PathVariable long alumnoId) {
         PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.getPfcFromAlumno(alumnoId));
         pfcResource.add(linkTo(methodOn(this.getClass()).getAlumno(alumnoId)).withRel("alumno"));
