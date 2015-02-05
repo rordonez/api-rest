@@ -17,6 +17,8 @@
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.4.1</jackson.version>
+        <logback.version>1.1.2</logback.version>
+        <jcloverslf4j.version>1.7.7</jcloverslf4j.version>
     </properties>
 
     <modules>
@@ -45,7 +47,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- PERSISTENCE -->
+            <!-- PERSISTENCIA -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -84,6 +86,12 @@
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring3</artifactId>
                 <version>2.1.2.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
@@ -163,7 +171,13 @@
 				<artifactId>json-path</artifactId>
 				<version>0.9.1</version>
                 <scope>test</scope>
-			</dependency>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 			<dependency>
 				<groupId>com.jayway.jsonpath</groupId>
 				<artifactId>json-path-assert</artifactId>
@@ -222,35 +236,21 @@
                 <artifactId>joda-time</artifactId>
                 <version>2.1</version>
             </dependency>
+
+            <!-- LogBack dependencies -->
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.12.6</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
-
-
-            <!-- LOGGING -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.2</version>
+                <version>${jcloverslf4j.version}</version>
             </dependency>
 
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-    </dependencies>
 
     <repositories>
 
@@ -267,10 +267,6 @@
             <id>spring-repo</id>
             <name>Spring Maven Repository</name>
             <url>https://repo.spring.io/release/</url>
-        </repository>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>http://projectlombok.org/mavenrepo</url>
         </repository>
         <repository>
             <id>spring-releases</id>
