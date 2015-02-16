@@ -9,9 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 /**
- * Loads the <A href="http://127.0.0.1:8080/h2/">config-based H2 database console</A>.
+ * Carga en <A href="http://localhost:8080/h2/"> una consola de configuración H2</A>.
  * <p/>
- * To access the database for this application, use the JDBC URI {@code jdbc:h2:mem:informatica}.
+ * Para acceder a la base de datos de esta aplicación usar  JDBC URI {@code jdbc:h2:mem:informatica}.
  *
  * @author Josh Long
  */

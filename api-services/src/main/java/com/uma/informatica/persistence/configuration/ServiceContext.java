@@ -1,5 +1,6 @@
 package com.uma.informatica.persistence.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -8,7 +9,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -22,7 +22,7 @@ public class ServiceContext {
 
     public static final String RESTAPI_NAME = "restapi";
 
-    @Inject
+    @Autowired
     DataSource dataSource;
 
     @Bean

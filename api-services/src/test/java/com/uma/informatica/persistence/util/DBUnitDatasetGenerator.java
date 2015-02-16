@@ -1,5 +1,6 @@
 package com.uma.informatica.persistence.util;
 
+import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import com.uma.informatica.persistence.configuration.ProductionDataSourceConfiguration;
 import com.uma.informatica.persistence.configuration.ServiceContext;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -7,11 +8,11 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,11 +23,11 @@ import java.io.OutputStream;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ServiceContext.class, ProductionDataSourceConfiguration.class})
+@ContextConfiguration(classes = {ServiceContext.class, ProductionDataSourceConfiguration.class}, initializers = PropertyMockingApplicationContextInitializer.class)
 @ActiveProfiles("production")
 public class DBUnitDatasetGenerator {
 
-    @Inject
+    @Autowired
     DataSource dataSource;
 
     @Test

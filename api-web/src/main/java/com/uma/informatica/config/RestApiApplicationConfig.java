@@ -8,11 +8,12 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+
 /**
- * Initializes the config application. This is a programmatic equivalent to {@literal config.xml}. {@link
- * AbstractAnnotationConfigDispatcherServletInitializer} sets up the Servlet-3.0 application <EM>and</EM> bootstraps the
- * main {@link org.springframework.context.ApplicationContext application context} instance that powers the Spring MVC
- * application.
+ *
+ * Configuración de la aplicación. Esta clase es equivalente a {@literal config.xml}. {@link
+ * AbstractAnnotationConfigDispatcherServletInitializer} configura la aplicación para que utilice Servlet-3.0 y arranca
+ * la instancia del contexto de la aplicación del que se nutre Spring MVC.
  *
  * @author Rafa Ordoñez
  */
@@ -27,7 +28,6 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
         }
         servletContext.setInitParameter("spring.profiles.active", springProfile);
         registerProxyFilter(servletContext, "springSecurityFilterChain");
-       // registerProxyFilter(servletContext, "oAuth2AuthenticationProcessingFilter");
     }
 
     @Override
@@ -61,3 +61,4 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
     }
 
 }
+
