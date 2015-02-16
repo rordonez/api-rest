@@ -2,15 +2,21 @@ package com.uma.informatica.persistence.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.uma.informatica.core.jackson.date.DateFormatPatterns;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Relation(collectionRelation="alumnos")
 @Entity
 @Table(name = "alumno")
 public class Alumno implements Identifiable<Long>, Serializable {
@@ -26,6 +32,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     private static final int MAX_LONGITUD_TELEFONO = 12;
     private static final int MAX_LONGITUD_EMAIL = 80;
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private Long id;
@@ -35,7 +42,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     private String dni;
 
     @JsonIgnore
-    @ManyToOne( cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @ManyToOne( cascade = {CascadeType.ALL})
     @JoinColumn(name = "pfc")
     private Pfc pfc;
 
@@ -77,15 +84,11 @@ public class Alumno implements Identifiable<Long>, Serializable {
     private String email;
 
     @NotNull
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.yyyy_MM_dd, timezone="CET")
     @Column(name="fechaNacimiento", nullable = false)
     private Date fechaNacimiento;
 
     public Alumno() {}
 
-    public Alumno(Alumno a) {
-        this(a.getDni(), a.getNombre(), a.getApellidos(), a.getTitulacion(), a.getDomicilio(), a.getLocalidad(), a.getPais(), a.getCodigoPostal(), a.getTelefono(), a.getEmail(), a.getFechaNacimiento());
-    }
 
     public Alumno(String dni, String nombre, String apellidos, TitulacionEnum titulacion, String domicilio, String localidad, String pais, String codigoPostal, String telefono, String email, Date fechaNacimiento) {
         this.dni = dni;
@@ -103,7 +106,19 @@ public class Alumno implements Identifiable<Long>, Serializable {
 
     public Long getId() {
         return id;
+    }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(113, 121).append(this.id).append(this.nombre).append(this.apellidos)
+                .append(this.dni).append(this.fechaNacimiento).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Alumno a = (Alumno) o;
+        return new EqualsBuilder().append(a.nombre, this.nombre).append(a.apellidos, this.apellidos)
+                .append(a.dni, this.dni).append(a.fechaNacimiento, this.fechaNacimiento).isEquals();
     }
 
     public void setId(Long id) {
@@ -198,6 +213,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
         this.email = email;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern= DateFormatPatterns.yyyy_MM_dd, timezone="CET")
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }

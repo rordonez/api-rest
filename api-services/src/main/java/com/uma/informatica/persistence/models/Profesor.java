@@ -2,31 +2,36 @@ package com.uma.informatica.persistence.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
-
-import javax.persistence.*;
-
 import org.springframework.hateoas.Identifiable;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "profesor")
 public class Profesor implements Identifiable<Long>, Serializable{
 
 	private static final long serialVersionUID = -6839445993695967602L;
 
+    @JsonIgnore
 	@Id
     @GeneratedValue
     private Long id;
 
+    @NotNull
     @Column(name="dni", unique = true, nullable = false, length = 9)
     private String dni;
 
+    @NotNull
     @Column(name="nombre", nullable = false, length = 45)
     private String nombre;
 
+    @NotNull
     @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
 
@@ -43,15 +48,24 @@ public class Profesor implements Identifiable<Long>, Serializable{
     @Column(name = "direccionEmpresa", length = 100)
     private String direccionEmpresa;
 
+    @NotNull
     @Column(name = "telefono", nullable = false, length = 12)
     private String telefono;
 
+    @NotNull
     @Column(name = "email", nullable = false, length = 80)
     private String email;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "directores")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "directores")
     private Collection<Pfc> pfcs;
+
+    @PreRemove
+    private void removePfcsFromProfesores() {
+        for (Pfc pfc : pfcs) {
+
+        }
+    }
 
     public Profesor() {}
 
@@ -62,6 +76,41 @@ public class Profesor implements Identifiable<Long>, Serializable{
         this.titulacion = titulacion;
         this.telefono = telefono;
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Profesor profesor = (Profesor) o;
+
+        if (!apellidos.equals(profesor.apellidos)) return false;
+        if (cargo != null ? !cargo.equals(profesor.cargo) : profesor.cargo != null) return false;
+        if (direccionEmpresa != null ? !direccionEmpresa.equals(profesor.direccionEmpresa) : profesor.direccionEmpresa != null)
+            return false;
+        if (!dni.equals(profesor.dni)) return false;
+        if (email != null ? !email.equals(profesor.email) : profesor.email != null) return false;
+        if (empresa != null ? !empresa.equals(profesor.empresa) : profesor.empresa != null) return false;
+        if (!nombre.equals(profesor.nombre)) return false;
+        if (telefono != null ? !telefono.equals(profesor.telefono) : profesor.telefono != null) return false;
+        if (titulacion != profesor.titulacion) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dni.hashCode();
+        result = 31 * result + nombre.hashCode();
+        result = 31 * result + apellidos.hashCode();
+        result = 31 * result + (titulacion != null ? titulacion.hashCode() : 0);
+        result = 31 * result + (empresa != null ? empresa.hashCode() : 0);
+        result = 31 * result + (cargo != null ? cargo.hashCode() : 0);
+        result = 31 * result + (direccionEmpresa != null ? direccionEmpresa.hashCode() : 0);
+        result = 31 * result + (telefono != null ? telefono.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
     }
 
     public Long getId() {
