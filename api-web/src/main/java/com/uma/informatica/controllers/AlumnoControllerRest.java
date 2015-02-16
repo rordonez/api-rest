@@ -8,7 +8,11 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.services.AlumnoService;
 import com.uma.informatica.persistence.services.PfcService;
 import com.wordnik.swagger.annotations.Api;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by rafaordonez on 16/02/14.
@@ -47,9 +48,8 @@ public class AlumnoControllerRest  {
 
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<Resources<AlumnoResource>> getAlumnos() {
-    	Resources<AlumnoResource> alumnosResources = new Resources<AlumnoResource>(alumnoResourceAssembler.toResources(alumnoService.getAll()));
-    	alumnosResources.add(linkTo(methodOn(AlumnoControllerRest.class).getAlumnos()).withSelfRel());
+    public ResponseEntity<PagedResources<AlumnoResource>> getAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
+        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.getAll(pageable),alumnoResourceAssembler);
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }

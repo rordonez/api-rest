@@ -3,6 +3,8 @@ package com.uma.informatica.persistence.services;
 
 import com.uma.informatica.core.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.Date;
@@ -14,7 +16,7 @@ public interface AlumnoService {
 
     Alumno findByDni(String dni);
 
-    Collection<Alumno> getAll();
+    Page<Alumno> getAll(Pageable pageable);
 
     Collection<Alumno> search(String dni, String nombre, String apellidos);
 

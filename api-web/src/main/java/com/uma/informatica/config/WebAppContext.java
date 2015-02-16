@@ -3,6 +3,7 @@ package com.uma.informatica.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.MediaType;
@@ -32,6 +33,7 @@ import java.util.Properties;
 @Profile({"test", "production"})
 @ComponentScan({"com.uma.informatica.**"})
 @EnableWebMvc
+@EnableSpringDataWebSupport
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class WebAppContext extends WebMvcConfigurerAdapter {
 

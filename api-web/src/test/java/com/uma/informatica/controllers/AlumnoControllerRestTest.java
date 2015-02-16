@@ -52,13 +52,37 @@ public class AlumnoControllerRestTest {
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
-                .andExpect(jsonPath("$.content", hasSize(7)))
+                .andExpect(jsonPath("$.content", hasSize(10)))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/alumnos")));
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/alumnos{?page,size,sort}")))
+                .andExpect(jsonPath("$.links[1].rel", is("next")))
+                .andExpect(jsonPath("$.links[1].href", is("http://localhost/alumnos?page=1&size=10{&sort}")))
 
+                .andExpect(jsonPath("$.page.totalElements", is(13)))
+                .andExpect(jsonPath("$.page.totalPages", is(2)))
+                .andExpect(jsonPath("$.page.size", is(10)));
     }
+
+    @Test
+    public void getAll_WithPagination_ShouldRender_200() throws Exception {
+        mockMvc.perform(get("/alumnos.json?page=1")
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(jsonPath("$.content", hasSize(3)))
+
+                .andExpect(jsonPath("$.links", hasSize(2)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/alumnos{?page,size,sort}")))
+                .andExpect(jsonPath("$.links[1].rel", is("prev")))
+                .andExpect(jsonPath("$.links[1].href", is("http://localhost/alumnos?page=0&size=10{&sort}")))
+                .andExpect(jsonPath("$.page.totalElements", is(13)));
+    }
+
 
 
 

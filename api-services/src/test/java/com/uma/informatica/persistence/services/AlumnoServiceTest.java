@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by rafaordonez on 27/01/14.
@@ -56,11 +58,12 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
         //Given
 
         //When
-        List<Alumno> alumnos = (List<Alumno>) this.alumnoService.getAll();
+        Page<Alumno> alumnos = this.alumnoService.getAll(new PageRequest(0, 10));
 
         //Then
         assertThat(alumnos, is(notNullValue()));
-        assertThat(alumnos, is(not(empty())));
+        assertThat(alumnos.getTotalPages(), is(1));
+        assertEquals(alumnos.getTotalElements(), 7L);
     }
 
     @Test(expected = AlumnoNoEncontradoException.class)
@@ -69,7 +72,7 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
         this.alumnoService.deleteAll();
 
         //When
-        this.alumnoService.getAll();
+        this.alumnoService.getAll(new PageRequest(0, 10));
 
         //Then exception is thrown
     }

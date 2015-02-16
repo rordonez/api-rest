@@ -5,6 +5,8 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.AlumnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +25,12 @@ public class JpaAlumnoService implements AlumnoService {
     }
 
     @Override
-    public Collection<Alumno> getAll() {
-        Collection<Alumno> alumnos = alumnoRepository.findAll();
-        if(alumnos.isEmpty()) {
+    public Page<Alumno> getAll(Pageable pageable) {
+        Page<Alumno> alumnosPage = alumnoRepository.findAll(pageable);
+        if(alumnosPage.getTotalElements() == 0) {
             throw new AlumnoNoEncontradoException();
         }
-        return alumnos;
+        return alumnosPage;
     }
 
     @Override
