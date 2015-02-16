@@ -14,6 +14,8 @@ public class IntegrationTestUtil {
 
     public static MediaType applicationJsonMediaType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("UTF-8"));
     public static MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error+json;charset=UTF-8");
+    public static MediaType applicationXmlMediaType = MediaType.parseMediaType("application/xml;charset=UTF-8");
+
 
     public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

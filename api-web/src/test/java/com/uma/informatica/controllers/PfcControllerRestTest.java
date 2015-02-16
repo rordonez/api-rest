@@ -1,38 +1,27 @@
 package com.uma.informatica.controllers;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.transaction.Transactional;
-
+import com.uma.informatica.config.RestApiAppContext;
+import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
+import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.uma.informatica.config.RestApiAppContext;
+import javax.transaction.Transactional;
+import java.util.Locale;
+
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by rafa on 01/12/14.
@@ -50,28 +39,15 @@ public class PfcControllerRestTest {
 
     private MockMvc mockMvc;
 
-    private MockRestServiceServer mockServer;
-
-    private RestTemplate restTemplate;
-
-
     @Before
     public void setUp() {
-        List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
-        converters.add(new StringHttpMessageConverter());
-        converters.add(new MappingJackson2HttpMessageConverter());
-
-        this.restTemplate = new RestTemplate();
-        this.restTemplate.setMessageConverters(converters);
-
-        this.mockServer = MockRestServiceServer.createServer(this.restTemplate);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
 
     @Test
     public void getAll_ShouldRender200() throws Exception {
-        mockMvc.perform(get("/pfcs")
+        mockMvc.perform(get("/pfcs.json")
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
@@ -80,32 +56,24 @@ public class PfcControllerRestTest {
                 .andExpect(jsonPath("$.content", hasSize(5)))
                 .andExpect(jsonPath("$.links", hasSize(1)))
                 .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs")))
-                .andExpect(jsonPath("$.content[0].id", is(1)))
-                .andExpect(jsonPath("$.content[1].id", is(2)))
-                .andExpect(jsonPath("$.content[2].id", is(3)))
-                .andExpect(jsonPath("$.content[3].id", is(4)))
-                .andExpect(jsonPath("$.content[4].id", is(5)));
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs")));
     }
 
     @Test
     public void searchAlumnos_ShouldRender_200() throws Exception {
-        mockMvc.perform(get("/pfcs?estado=EMPEZADO&search=true")
+        mockMvc.perform(get("/pfcs.json?estado=EMPEZADO&search=true")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.links", hasSize(0)))
-                .andExpect(jsonPath("$.content[0].id", is(4)))
-                .andExpect(jsonPath("$.content[1].id", is(5)));
-
+                .andExpect(jsonPath("$.links", hasSize(0)));
     }
 
     @Test
     public void searchAlumnos_PfcNoEncontradoException_ShouldRender_404() throws Exception {
-        mockMvc.perform(get("/pfcs?search=true")
+        mockMvc.perform(get("/pfcs.json?search=true")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType))
 
@@ -118,43 +86,320 @@ public class PfcControllerRestTest {
     }
 
     @Test
-    public void createPfc_MethodArgumentNotValidException_ShouldRender400() throws Exception {
+    public void createPfc_ShouldRender201View() throws Exception {
 
-        mockMvc.perform(put("/pfcs")
+        mockMvc.perform(post("/pfcs.json")
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .content(mockPfcJson()))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/6")))
+
+                .andExpect(jsonPath("$.estado", is(EstadoPfc.NO_EMPEZADO.name())));
+    }
+
+
+    @Test
+    public void invalidJsonMessage_HttpMessageNotReadableException_ShouldRender400() throws Exception {
+        mockMvc.perform(post("/pfcs.json")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .locale(new Locale("ES"))
-                .content(mockPfcJsonWithoutDirectores()))
+                .content("{+}"))
 
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", containsString("Could not read JSON: Unexpected character")));
+    }
+
+    @Test
+    public void createPfc_MethodArgumentNotValidException_ShouldRender400() throws Exception {
+
+        mockMvc.perform(post("/pfcs.json")
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .locale(new Locale("ES"))
+                .content(mockPfcJsonWithoutDepartamento()))
+
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("Parámetro: departamento no puede ser null")));
+    }
+
+    @Test
+    public void getPfc_ShouldRender200() throws Exception {
+        mockMvc.perform(get("/pfcs/{pfcId}.json", 1L)
+            .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")))
+
+                .andExpect(jsonPath("$.directores", hasSize(1)))
+                .andExpect(jsonPath("$.directores[0].links", hasSize(1)))
+                .andExpect(jsonPath("$.directores[0].links[0].rel", is("self")))
+                .andExpect(jsonPath("$.directores[0].links[0].href", is("http://localhost/profesores/1")));
+    }
+
+    @Test
+    public void getPfc_ShouldRender404() throws Exception {
+        mockMvc.perform(get("/pfcs/{pfcId}.json", 0L)
+        .accept(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+    }
+
+    @Test
+    public void removePfc_ShouldRender202() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}.json", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")));
+    }
+
+    @Test
+    public void removePfc_ShouldRender404() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}.json", 0L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+    }
+
+    @Test
+    public void updateAlumno_ShouldRender202() throws Exception {
+        mockMvc.perform(patch("/pfcs/{pfcId}.json", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .content(mockUpdatePfcJson()))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is("self")))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")));
+    }
+
+    @Test
+    public void updateAlumno_With_Invalid_ID_ShouldRender404() throws Exception {
+        mockMvc.perform(patch("/pfcs/{pfcId}.json", 0L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType)
+                .contentType(IntegrationTestUtil.applicationJsonMediaType)
+                .content("{}"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+    }
+
+
+    @Test
+    public void updateDirectorAcademico_ShouldRender202() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directoracademico/{profesorId}.json", 1L, 3L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/profesores/3")));
+
+    }
+
+    @Test
+    public void updateDirectorAcademico_WhenPfcIsNotFound_ShouldRender404() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directoracademico/{profesorId}.json", 0L, 3L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+    }
+
+    @Test
+    public void updateDirectorAcademico_WhenProfesorIsNotFound_ShouldRender404() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directoracademico/{profesorId}.json", 1L, 0L))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("Profesor con identificador: 0 no encontrado")));
+    }
+
+    @Test
+    public void deleteDirectorAcademico_ShouldRender202() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}/directoracademico.json", 2L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].href", is("http://localhost/profesores/2")));
+    }
+
+    @Test
+    public void deleteDirectorAcademico_WithoutData() throws Exception {
+            mockMvc.perform(delete("/pfcs/{pfcId}/directoracademico.json", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+
+                    .andExpect(jsonPath("$", hasSize(1)))
+                    .andExpect(jsonPath("$[0].message", is("Profesor no encontrado")));
+    }
+
+    @Test
+    public void testAddDirectores_ShouldRender202() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directores.json?directores=1,2", 1)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].links[0].href", is("http://localhost/profesores/1")))
+                .andExpect(jsonPath("$.content[1].links[0].href", is("http://localhost/profesores/2")));
+    }
+
+    @Test
+    public void testAddDirectores_WithoutPfc_ShouldRender404() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directores.json?directores=1,2", 0L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+
+    }
+    @Test
+    public void testAddDirectores_InvalidDirectors_ShouldRender404() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directores.json?directores=0", 0L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+
+    }
+
+    @Test
+    public void testAddDirectores_InvalidDirectors_ShouldRender400() throws Exception {
+        mockMvc.perform(put("/pfcs/{pfcId}/directores.json?directores", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+                .andExpect(content().encoding("UTF-8"))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("Required List parameter 'directores' is not present")));
+
+    }
+
+    @Test
+    public void testDeleteDirectores_ShouldRender200() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}/directores.json", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].links[0].href", is("http://localhost/profesores/1")));
+    }
+
+    @Test
+    public void testDeleteDirectores_WithoutPfc_ShouldRender404() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}/directores.json", 1L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isAccepted())
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
                 .andExpect(jsonPath("$.links", hasSize(0)))
-                .andExpect(jsonPath("$.content", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
-    private String mockPfcJsonWithoutDirectores() {
-        return "{";
+    @Test
+    public void testDeleteDirectores_WithoutPfc_Shouldrender404() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}/directores.json", 0L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
+
+    }
+
+    @Test
+    public void testDeleteDirectores_WithoutDirectores_Shouldrender404() throws Exception {
+        mockMvc.perform(delete("/pfcs/{pfcId}/directores.json", 2L)
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
+
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].message", is("Pfc con id: 2 no tiene directores asignados")));
+
+    }
+
+    private String mockUpdatePfcJson() {
+        return "{" +
+                "\"nombre\":\"Nombre actualizado\"," +
+                "\"departamento\":\"Departamento actualizado\"," +
+                "\"fechaInicio\":\"2015-03-11\"," +
+                "\"estado\":\"EMPEZADO\"}";
+
+    }
+
+    private String mockPfcJson() {
+        return "{" +
+                "\"nombre\":\"Tecnologías de la Innovación\"," +
+                "\"departamento\":\"Lenguajes y Ciencias de la Computacion\"}";
     }
 
 
-    //    private String mockSearchPfcsAlumnoNoEncontradoException() {
-//        return "{" +
-//                    "\"nombre\":\"Tecnologías de la Innovación\"," +
-//                    "\"estado\":\"FINALIZADO\"," +
-//                    "\"departamento\":\"Lenguajes y Ciencias de la Computacion\"," +
-//                "fechaFin":null,
-//                "links":[
-//            {
-//                "rel":"self",
-//                    "href":"http:\/\/localhost\/pfcs\/1"
-//            },
-//            {
-//                "rel":"directores",
-//                    "href":"http:\/\/localhost\/pfcs\/1\/directores"
-//            }
-//            ],
-//            "directorAcademico":null,
-//                "fechaInicio":"2001-09-266"
-//        }
-//    }
+    private String mockPfcJsonWithoutDepartamento() {
+
+        return "{" +
+                "\"nombre\":\"Tecnologías de la Innovación\"}";
+    }
+
+
 }

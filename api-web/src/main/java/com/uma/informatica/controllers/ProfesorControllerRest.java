@@ -1,106 +1,68 @@
 package com.uma.informatica.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.uma.informatica.persistence.models.Pfc;
+import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
+import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by rafaordonez on 02/03/14.
  */
 @ExposesResourceFor(Profesor.class)
 @RestController
-@RequestMapping(value = "/profesores", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ProfesorControllerRest implements ProfesorController {
+@RequestMapping(value = "/profesores")
+public class ProfesorControllerRest {
 
     private ProfesorService profesorService;
 
+
+
+    private final ProfesorResourceAssembler profesorResourceAssembler;
+
     @Inject
-    public ProfesorControllerRest(ProfesorService profesorService) {
+    public ProfesorControllerRest(ProfesorService profesorService, ProfesorResourceAssembler profesorResourceAssembler) {
         this.profesorService = profesorService;
+        this.profesorResourceAssembler = profesorResourceAssembler;
     }
 
-    @Override
-    public List<Profesor> getProfesores() {
-        List<Profesor> profesors = new ArrayList<>();
-        profesors.addAll(this.profesorService.getAll());
-        return profesors;
+    @RequestMapping (method = RequestMethod.GET)
+    public ResponseEntity<Resources<ProfesorResource>> getProfesores() {
+        Resources<ProfesorResource> profesorResources = new Resources<>(profesorResourceAssembler.toResources(profesorService.getAll()));
+        profesorResources.add(linkTo(methodOn(ProfesorControllerRest.class).getProfesores()).withSelfRel());
+
+        return new ResponseEntity<>(profesorResources, HttpStatus.OK);
     }
 
-    @Override
-    public Profesor getProfesor(@PathVariable long profesorId) {
+    @RequestMapping (method = RequestMethod.GET, value = "/{profesorId}")
+    public ResponseEntity<ProfesorResource> getProfesor(@PathVariable long profesorId) {
 
-        return this.profesorService.findById(profesorId);
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(profesorService.findById(profesorId)), HttpStatus.OK);
     }
 
-    @Override
-    public Profesor createProfesor(@RequestBody Profesor profesor) {
-        return this.profesorService.createProfesor(profesor.getDni(), profesor.getNombre(), profesor.getApellidos(), profesor.getTitulacion(), profesor.getTelefono(), profesor.getEmail());
+    @RequestMapping (method = RequestMethod.POST)
+    public ResponseEntity<ProfesorResource> createProfesor(@Valid @RequestBody Profesor profesor) {
+        return new ResponseEntity<ProfesorResource>(profesorResourceAssembler.toResource(profesorService.createProfesor(profesor.getDni(), profesor.getNombre(), profesor.getApellidos(), profesor.getTitulacion(), profesor.getTelefono(), profesor.getEmail())),HttpStatus.CREATED);
     }
 
-    @Override
-    public Profesor removeProfesor(@PathVariable long profesorId) {
-        return this.profesorService.deleteProfesor(profesorId);
+    @RequestMapping (method = RequestMethod.DELETE, value = "/{profesorId}")
+    public ResponseEntity<ProfesorResource> removeProfesor(@PathVariable long profesorId) {
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(profesorService.deleteProfesor(profesorId)), HttpStatus.ACCEPTED);
     }
 
-    @Override
-    public List<Profesor> searchProfesores(@RequestParam String nombre, @RequestParam String apellidos, @RequestParam String email) {
-        List<Profesor> profesorList = new ArrayList<>();
-        if (nombre != null && apellidos != null) {
-            profesorList.addAll(profesorService.findByNombreYApellidos(nombre, apellidos));
-        }
-        else {
-            if (email != null) {
-                profesorList.add(profesorService.findByEmail(email));
-            }
-        }
-        return profesorList;
+
+    @RequestMapping (method = RequestMethod.PATCH, value = "/{profesorId}")
+    public ResponseEntity<ProfesorResource> updateProfesor(@PathVariable long profesorId, @RequestBody Profesor profesor) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @Override
-    public Profesor updateEmpresa(@PathVariable long profesorId, @RequestParam String empresa) {
-        return profesorService.updateEmpresa(profesorId, empresa);
-    }
-
-    @Override
-    public Profesor addEmpresa(@PathVariable long profesorId, @RequestParam String empresa) {
-        return profesorService.addEmpresa(profesorId, empresa);
-    }
-
-    @Override
-    public Profesor updateTelefono(@PathVariable long profesorId, @RequestParam String telefono) {
-        return profesorService.updateTelefono(profesorId, telefono);
-    }
-
-    @Override
-    public Profesor addTelefono(@PathVariable long profesorId, @RequestParam String telefono) {
-        return profesorService.addTelefono(profesorId, telefono);
-    }
-
-    @Override
-    public Profesor updateEmail(@PathVariable long profesorId, @RequestParam String email) {
-        return profesorService.updateEmail(profesorId, email);
-    }
-
-    @Override
-    public Profesor addEmail(@PathVariable long profesorId, @RequestParam String email) {
-        return profesorService.addEmail(profesorId, email);
-    }
-
-    @Override
-    public List<Pfc> getPfcs(@PathVariable long profesorId) {
-        return profesorService.getPfcs(profesorId);
-    }
 }
