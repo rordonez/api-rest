@@ -1,7 +1,7 @@
 package com.uma.informatica.persistence.services;
 
 import com.google.common.collect.Lists;
-import com.uma.informatica.persistence.exceptions.*;
+import com.uma.informatica.core.exceptions.*;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
@@ -9,13 +9,13 @@ import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import com.uma.informatica.persistence.repositories.AlumnoRepository;
 import com.uma.informatica.persistence.repositories.PfcRepository;
 import com.uma.informatica.persistence.repositories.ProfesorRepository;
-import com.uma.informatica.persistence.repositories.ProfesorSpecifications;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class JpaPfcService implements PfcService {
     private PfcRepository pfcRepository;
     private ProfesorRepository profesorRepository;
 
-    @Inject
+    @Autowired
     public JpaPfcService(AlumnoRepository alumnoRepository, PfcRepository pfcRepository, ProfesorRepository profesorRepository) {
         this.alumnoRepository = alumnoRepository;
         this.pfcRepository = pfcRepository;
@@ -62,7 +62,7 @@ public class JpaPfcService implements PfcService {
 
     @Override
     public List<Pfc> getAll() {
-        List<Pfc> pfcs = this.pfcRepository.findAll();
+        List<Pfc> pfcs = this.pfcRepository.findAll(new PageRequest(0, 10));
         if(pfcs.isEmpty()) {
             throw new PfcNoEncontradoException();
         }
@@ -93,67 +93,78 @@ public class JpaPfcService implements PfcService {
 
     @Override
     public Profesor findByDirectorAcademico(long pfcId) {
-        return this.pfcRepository.findByDirectorAcademico(pfcId);
-    }
-
-    @Override
-    public List<Profesor> findByDirector(long pfcId) {
-        return this.pfcRepository.findByDirector(pfcId);
-    }
-
-    @Override
-    public Pfc createPfc(String nombre, String departamento, EstadoPfc estadoPfc, List<Long> directores) {
-        if (CollectionUtils.isEmpty(directores)) {
-            throw new InvalidPfcDataCreationException("No se puede crear un Pfc si no tiene directores asociados");
+        Pfc pfc =  this.findById(pfcId);
+        if (pfc.getDirectorAcademico() == null) {
+            throw new DirectorAcademicoNotFoundException(pfcId);
         }
-        Iterable<Profesor> profesores = this.profesorRepository.findAll(ProfesorSpecifications.idInList(directores));
-        Pfc pfc = new Pfc(nombre, departamento, estadoPfc, Lists.newArrayList(profesores));
+        return pfc.getDirectorAcademico();
+    }
+
+
+    @Override
+    public Pfc createPfc(String nombre, String departamento) {
+        Pfc pfc = new Pfc(nombre, departamento);
 
         return this.pfcRepository.save(pfc);
     }
 
     @Override
     public Pfc deletePfc(long pfcId) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if(pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
+        Pfc pfc = this.findById(pfcId);
+        List<Alumno> alumnos = this.alumnoRepository.findByPfc(pfc);
+        for(Alumno a : alumnos) {
+            a.setPfc(null);
+            this.alumnoRepository.save(a);
         }
+
+
+        List<Profesor> profesores = pfc.getDirectores();
+        for(Profesor p : profesores) {
+            p.getPfcs().remove(pfc);
+            this.profesorRepository.save(p);
+        }
+
+        pfc.setDirectores(null);
+
         this.pfcRepository.delete(pfcId);
         return pfc;
     }
 
     @Override
-    public Pfc updateNombre(long pfcId, String nombre) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
-        pfc.setNombre(nombre);
+    public Pfc updatePfc(long pfcId, String nombre, String departamento, Date fechaInicio, Date fechaFin, EstadoPfc estado) {
 
-        return this.pfcRepository.save(pfc);
+        Pfc pfc = this.findById(pfcId);
+        updateFields(nombre, departamento, fechaInicio, fechaFin, estado, pfc);
+
+        this.pfcRepository.save(pfc);
+        return pfc;
     }
 
+
+
     @Override
-    public List<Profesor> deleteDirectors(long pfcId, List<Long> directores) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
+    public List<Profesor> deleteDirectors(long pfcId) {
+        Pfc pfc = this.findById(pfcId);
+
+        if(CollectionUtils.isEmpty(pfc.getDirectores())) {
+            throw new PfcSinDirectoresException(pfcId);
         }
-        List<Profesor> profesores = Lists.newArrayList(this.profesorRepository.findAll(directores));
-        if(profesores== null || profesores.isEmpty()) {
-            throw new ProfesorNoEncontradoException(directores);
+
+        List<Profesor> profesores = new ArrayList<>(pfc.getDirectores());
+
+        for(Profesor profesor : pfc.getDirectores()) {
+            profesor.getPfcs().remove(pfc);
+            this.profesorRepository.save(profesor);
         }
-        pfc.getDirectores().removeAll(profesores);
+
+        pfc.getDirectores().clear();
         this.pfcRepository.save(pfc);
         return profesores;
     }
 
     @Override
     public List<Profesor> addDirectors(long pfcId, List<Long> directores) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
+        Pfc pfc = this.findById(pfcId);
         List<Profesor> profesores = Lists.newArrayList(this.profesorRepository.findAll(directores));
         if(profesores == null || profesores.isEmpty()) {
             throw new ProfesorNoEncontradoException(directores);
@@ -163,22 +174,10 @@ public class JpaPfcService implements PfcService {
         return profesores;
     }
 
-    @Override
-    public Pfc updateEstado(long pfcId, EstadoPfc estado) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
-        pfc.setEstado(estado);
-        return this.pfcRepository.save(pfc);
-    }
 
     @Override
     public Profesor changeDirectorAcademico(long pfcId, long directorAcademico) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
+        Pfc pfc = this.findById(pfcId);
         Profesor profesor = this.profesorRepository.findOne(directorAcademico);
         if(profesor == null) {
             throw new ProfesorNoEncontradoException(directorAcademico);
@@ -188,17 +187,6 @@ public class JpaPfcService implements PfcService {
         return profesor;
     }
 
-    @Override
-    public Pfc getPfcFromAlumno(long alumnoId) {
-        Alumno alumno = this.alumnoRepository.findOne(alumnoId);
-        if(alumno == null) {
-            throw new AlumnoNoEncontradoException(alumnoId);
-        }
-        if(alumno.getPfc() == null) {
-            throw new AlumnoSinPfcException(alumnoId);
-        }
-        return alumno.getPfc();
-    }
 
     @Override
     public Pfc addPfcToAlumno(long alumnoId, long pfcId) {
@@ -206,10 +194,8 @@ public class JpaPfcService implements PfcService {
         if(alumno == null) {
             throw new AlumnoNoEncontradoException(alumnoId);
         }
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if(pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
+        Pfc pfc = this.findById(pfcId);
+
         alumno.setPfc(pfc);
         return this.pfcRepository.save(pfc);
     }
@@ -226,18 +212,43 @@ public class JpaPfcService implements PfcService {
         Pfc pfc = alumno.getPfc();
         alumno.setPfc(null);
         this.alumnoRepository.save(alumno);
-        this.pfcRepository.delete(pfc.getId());
         return pfc;
     }
 
     @Override
-    public Pfc updateFechaFin(long pfcId, Date fechaFin) {
-        Pfc pfc = this.pfcRepository.findOne(pfcId);
-        if (pfc == null) {
-            throw new PfcNoEncontradoException(pfcId);
-        }
-        pfc.setFechaFin(fechaFin);
-        return this.pfcRepository.save(pfc);
+    public void deleteAll() {
+        this.pfcRepository.deleteAll();
     }
 
+    @Override
+    public Profesor deleteDirectorAcademico(long pfcId) {
+        Pfc pfc = this.findById(pfcId);
+        Profesor profesor = pfc.getDirectorAcademico();
+        if(profesor == null) {
+            throw new ProfesorNoEncontradoException();
+        }
+
+        pfc.setDirectorAcademico(null);
+        this.pfcRepository.save(pfc);
+
+        return profesor;
+    }
+
+    private void updateFields(String nombre, String departamento, Date fechaInicio, Date fechaFin, EstadoPfc estado, Pfc pfc) {
+        if(nombre != null) {
+            pfc.setNombre(nombre);
+        }
+        if (departamento != null) {
+            pfc.setDepartamento(departamento);
+        }
+        if(fechaInicio != null) {
+            pfc.setFechaInicio(fechaInicio);
+        }
+        if(fechaFin != null) {
+            pfc.setFechaFin(fechaFin);
+        }
+        if(estado != null) {
+            pfc.setEstado(estado);
+        }
+    }
 }

@@ -4,7 +4,6 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -30,29 +29,23 @@ public interface PfcService {
 
     List<Alumno> findByPfc(long pfcId);
 
-    @Query("SELECT p FROM Profesor p INNER JOIN b.categories c WHERE c IN (:categories)")
-    List<Profesor> findByDirector(long pfcId);
-
-    Pfc createPfc(String nombre, String departamento, EstadoPfc estadoPfc, List<Long> directores);
+    Pfc createPfc(String nombre, String departamento);
 
     Pfc deletePfc(long pfcId);
 
-    Pfc updateNombre(long pfcId, String nombre);
-
-    Pfc updateEstado(long pfcId, EstadoPfc estado);
+    Pfc updatePfc(long pfcId, String nombre, String departamento, Date fechaInicio, Date fechaFin, EstadoPfc estado);
 
     Profesor changeDirectorAcademico(long pfcId, long directorAcademico);
 
-    List<Profesor> deleteDirectors(long pfcId, List<Long> directores);
+    List<Profesor> deleteDirectors(long pfcId);
 
     List<Profesor> addDirectors(long pfcId, List<Long> directores);
-
-    Pfc getPfcFromAlumno(long alumnoId);
 
     Pfc addPfcToAlumno(long alumnoId, long pfcId);
 
     Pfc deletePfcFromAlumno(long alumnoId);
 
-    Pfc updateFechaFin(long pfcId, Date fechaFin);
+    void deleteAll();
 
+    Profesor deleteDirectorAcademico(long pfcId);
 }

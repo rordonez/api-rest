@@ -1,7 +1,7 @@
 package com.uma.informatica.persistence.services;
 
 
-import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
+import com.uma.informatica.core.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
 
 import java.util.Collection;
@@ -26,9 +26,9 @@ public interface AlumnoService {
 
     Alumno deleteAlumno(long alumnId);
 
-    Alumno updateDireccion(long id, String domicilio, String localidad, String pais, String codigoPostal);
+    Alumno updateAlumno(long id, String domicilio, String localidad, String pais, String codigoPostal, String email, String telefono);
 
-    Alumno updateEmail(long id, String email);
+    void deleteAll();
 
-    Alumno updateTelefono(long id, String telefono);
+    Alumno deletePfc(long alumnoId);
 }

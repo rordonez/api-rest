@@ -1,17 +1,17 @@
 package com.uma.informatica.persistence.services;
 
-import com.uma.informatica.persistence.exceptions.ProfesorNoEncontradoException;
+import com.uma.informatica.core.exceptions.ProfesorNoEncontradoException;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.PfcRepository;
 import com.uma.informatica.persistence.repositories.ProfesorRepository;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class JpaProfesorService implements ProfesorService {
     private ProfesorRepository profesorRepository;
     private PfcRepository pfcRepository;
 
-    @Inject
+    @Autowired
     public JpaProfesorService(ProfesorRepository profesorRepository, PfcRepository pfcRepository) {
         this.profesorRepository = profesorRepository;
         this.pfcRepository = pfcRepository;

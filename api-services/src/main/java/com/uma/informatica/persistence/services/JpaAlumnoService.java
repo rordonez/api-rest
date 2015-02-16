@@ -1,14 +1,13 @@
 package com.uma.informatica.persistence.services;
 
-import com.uma.informatica.persistence.exceptions.AlumnoNoEncontradoException;
+import com.uma.informatica.core.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.AlumnoRepository;
-import com.uma.informatica.persistence.repositories.PfcRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Date;
 
@@ -17,17 +16,15 @@ import java.util.Date;
 public class JpaAlumnoService implements AlumnoService {
 
     private AlumnoRepository alumnoRepository;
-    private PfcRepository pfcRepository;
 
-    @Inject
-    public JpaAlumnoService(AlumnoRepository alumnoRepository, PfcRepository pfcRepository) {
+    @Autowired
+    public JpaAlumnoService(AlumnoRepository alumnoRepository) {
         this.alumnoRepository = alumnoRepository;
-        this.pfcRepository = pfcRepository;
     }
 
     @Override
     public Collection<Alumno> getAll() {
-        Collection<Alumno> alumnos = (Collection<Alumno>) alumnoRepository.findAll();
+        Collection<Alumno> alumnos = alumnoRepository.findAll();
         if(alumnos.isEmpty()) {
             throw new AlumnoNoEncontradoException();
         }
@@ -71,48 +68,32 @@ public class JpaAlumnoService implements AlumnoService {
 
     @Override
     public Alumno deleteAlumno(long alumnId) {
-        Alumno alumno = alumnoRepository.findOne(alumnId);
-        if (alumno == null) {
-            throw new AlumnoNoEncontradoException(alumnId);
-        }
+        Alumno alumno = this.findById(alumnId);
         alumnoRepository.delete(alumnId);
         return alumno;
     }
 
     @Override
-    public Alumno updateDireccion(long id, String domicilio, String localidad, String pais, String codigoPostal) {
-        Alumno alumno = this.alumnoRepository.findOne(id);
-        if (alumno == null) {
-            throw new AlumnoNoEncontradoException(id);
-        }
-        alumno.setDomicilio(domicilio);
-        alumno.setCodigoPostal(codigoPostal);
-        alumno.setLocalidad(localidad);
-        alumno.setPais(pais);
+    public Alumno updateAlumno(long id, String domicilio, String localidad, String pais, String codigoPostal, String email, String telefono) {
+        Alumno alumno = this.findById(id);
+        if(domicilio != null)
+            alumno.setDomicilio(domicilio);
+        if(codigoPostal != null)
+            alumno.setCodigoPostal(codigoPostal);
+        if(localidad != null)
+            alumno.setLocalidad(localidad);
+        if(pais != null)
+            alumno.setPais(pais);
+        if(email != null)
+            alumno.setEmail(email);
+        if(telefono != null)
+            alumno.setTelefono(telefono);
+
         this.alumnoRepository.save(alumno);
 
         return alumno;
     }
 
-    @Override
-    public Alumno updateEmail(long id, String email) {
-        Alumno alumno = this.alumnoRepository.findOne(id);
-        if (alumno == null) {
-            throw new AlumnoNoEncontradoException(id);
-        }
-        alumno.setEmail(email);
-        return this.alumnoRepository.save(alumno);
-    }
-
-    @Override
-    public Alumno updateTelefono(long id, String telefono) {
-        Alumno alumno = this.alumnoRepository.findOne(id);
-        if (alumno == null) {
-            throw new AlumnoNoEncontradoException(id);
-        }
-        alumno.setTelefono(telefono);
-        return this.alumnoRepository.save(alumno);
-    }
 
     @Override
     public Alumno createAlumno(String dni, String nombre, String apellidos, String titulacion, String domicilio, String localidad, String pais, String codigoPostal, String telefono, String email, Date fechaNacimiento) {
@@ -121,4 +102,15 @@ public class JpaAlumnoService implements AlumnoService {
         return alumno;
     }
 
+    @Override
+    public void deleteAll() {
+        this.alumnoRepository.deleteAll();
+    }
+
+    @Override
+    public Alumno deletePfc(long alumnoId) {
+        Alumno alumno = this.findById(alumnoId);
+        alumno.setPfc(null);
+        return alumno;
+    }
 }
