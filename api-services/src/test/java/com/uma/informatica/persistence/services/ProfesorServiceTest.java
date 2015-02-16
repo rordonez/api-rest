@@ -9,6 +9,7 @@ import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -31,6 +32,7 @@ import static org.hamcrest.Matchers.*;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class})
 @ContextConfiguration(classes = ServiceContext.class, initializers = PropertyMockingApplicationContextInitializer.class)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @DatabaseSetup("classpath:/dataset.xml")
 public class ProfesorServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 

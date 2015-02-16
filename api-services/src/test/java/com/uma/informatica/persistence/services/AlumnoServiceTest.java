@@ -62,8 +62,8 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
 
         //Then
         assertThat(alumnos, is(notNullValue()));
-        assertThat(alumnos.getTotalPages(), is(1));
-        assertEquals(alumnos.getTotalElements(), 7L);
+        assertThat(alumnos.getTotalPages(), is(2));
+        assertEquals(alumnos.getTotalElements(), 13L);
     }
 
     @Test(expected = AlumnoNoEncontradoException.class)

@@ -12,6 +12,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -105,7 +106,7 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
     @Test(expected = PfcNoEncontradoException.class)
     public void testGetAll_WithoutResults() throws Exception {
         //Given
-        List<Alumno> alumnos = new ArrayList<>(this.alumnoService.getAll());
+        Page<Alumno> alumnos = this.alumnoService.getAll(new PageRequest(0, 10));
         for(Alumno alumno : alumnos) {
             alumno.setPfc(null);
             this.alumnoService.deletePfc(alumno.getId());
@@ -177,7 +178,7 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
         }
 
         //TODO Extract to a new operation at the same interface
-        List<Alumno> alumnos = (List<Alumno>) this.alumnoService.getAll();
+        Page<Alumno> alumnos = this.alumnoService.getAll(new PageRequest(0, 10));
         for(Alumno a : alumnos) {
             if(null != a.getPfc()) {
                 assertNotEquals(a.getPfc().getId(), DELETED_ID);

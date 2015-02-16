@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -55,8 +56,8 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(5)))
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs")));
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs")));
     }
 
     @Test
@@ -96,8 +97,8 @@ public class PfcControllerRestTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/6")))
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/6")))
 
                 .andExpect(jsonPath("$.estado", is(EstadoPfc.NO_EMPEZADO.name())));
     }
@@ -142,13 +143,13 @@ public class PfcControllerRestTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")))
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")))
 
                 .andExpect(jsonPath("$.directores", hasSize(1)))
                 .andExpect(jsonPath("$.directores[0].links", hasSize(1)))
-                .andExpect(jsonPath("$.directores[0].links[0].rel", is("self")))
-                .andExpect(jsonPath("$.directores[0].links[0].href", is("http://localhost/profesores/1")));
+                .andExpect(jsonPath("$.directores[0].links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.directores[0].links[0].href", endsWith("/profesores/1")));
     }
 
     @Test
@@ -170,8 +171,8 @@ public class PfcControllerRestTest {
                 .andExpect(status().isAccepted())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")));
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")));
     }
 
     @Test
@@ -197,8 +198,8 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is("self")))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/pfcs/1")));
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")));
     }
 
     @Test
@@ -225,7 +226,7 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/profesores/3")));
+                .andExpect(jsonPath("$.links[0].href", endsWith("/profesores/3")));
 
     }
 
@@ -261,7 +262,7 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].href", is("http://localhost/profesores/2")));
+                .andExpect(jsonPath("$.links[0].href", endsWith("/profesores/2")));
     }
 
     @Test
@@ -284,8 +285,8 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content[0].links[0].href", is("http://localhost/profesores/1")))
-                .andExpect(jsonPath("$.content[1].links[0].href", is("http://localhost/profesores/2")));
+                .andExpect(jsonPath("$.content[0].links[0].href", endsWith("/profesores/1")))
+                .andExpect(jsonPath("$.content[1].links[0].href", endsWith("/profesores/2")));
     }
 
     @Test
@@ -338,7 +339,7 @@ public class PfcControllerRestTest {
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].links[0].href", is("http://localhost/profesores/1")));
+                .andExpect(jsonPath("$.content[0].links[0].href", endsWith("/profesores/1")));
     }
 
     @Test

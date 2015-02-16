@@ -62,7 +62,7 @@ public class JpaPfcService implements PfcService {
 
     @Override
     public List<Pfc> getAll() {
-        List<Pfc> pfcs = this.pfcRepository.findAll(new PageRequest(0, 10));
+        List<Pfc> pfcs = this.pfcRepository.findAll();
         if(pfcs.isEmpty()) {
             throw new PfcNoEncontradoException();
         }
