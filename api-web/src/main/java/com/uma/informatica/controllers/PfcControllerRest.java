@@ -1,12 +1,17 @@
 package com.uma.informatica.controllers;
 
+import com.uma.informatica.controllers.resources.AlumnoResource;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import com.uma.informatica.persistence.services.PfcService;
 import com.wordnik.swagger.annotations.Api;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,17 +49,16 @@ public class PfcControllerRest {
     }
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<Resources<PfcResource>> getPfcs() {
-    	Resources<PfcResource> pfcsResources = new Resources<PfcResource>(pfcResourceAssembler.toResources(pfcService.getAll()));
-    	pfcsResources.add(linkTo(methodOn(PfcControllerRest.class).getPfcs()).withSelfRel());
-    	
+    public ResponseEntity<PagedResources<PfcResource>> getPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
+        PagedResources<PfcResource> pfcsResources = pagedAssembler.toResource(pfcService.getAll(pageable), pfcResourceAssembler);
+
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 
 
     @RequestMapping (method = RequestMethod.GET, params = {"search=true"})
-    public ResponseEntity<Resources<PfcResource>> searchPfcs(@RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado) {
-    	Resources<PfcResource> pfcsResources = new Resources<>(pfcResourceAssembler.toResources(pfcService.search(departamento, nombre, estado != null ? estado.name() : null)));
+    public ResponseEntity<PagedResources<PfcResource>> searchPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado) {
+        PagedResources<PfcResource> pfcsResources = pagedAssembler.toResource(pfcService.search(departamento, nombre, estado != null ? estado.name() : null, pageable), pfcResourceAssembler);
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }
 

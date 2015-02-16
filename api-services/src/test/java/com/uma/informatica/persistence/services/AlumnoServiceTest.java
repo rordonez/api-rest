@@ -109,14 +109,14 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
 
     @Test(expected = AlumnoNoEncontradoException.class)
     public void testSearchWithoutResults() {
-        Collection<Alumno> alumnos = alumnoService.search("325353234A","asd","sdg");
-        assertThat(alumnos, empty());
+        Page<Alumno> alumnos = alumnoService.search("325353234A","asd","sdg", new PageRequest(0,10));
+        assertEquals(alumnos.getTotalElements(), is(0));
     }
 
     @Test
     public void testSearch() {
-        Collection<Alumno> alumnos = alumnoService.search("2345E", "Rafa", "ea");
-        assertThat(alumnos, not(empty()));
+        Page<Alumno> alumnos = alumnoService.search("2345E", "Rafa", "ea", new PageRequest(0, 10));
+        assertEquals(alumnos.getTotalElements(), 1L);
     }
 
     @Test

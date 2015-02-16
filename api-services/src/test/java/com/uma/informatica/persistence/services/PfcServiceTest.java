@@ -98,9 +98,9 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
 
     @Test
     public void testGetAll() {
-        List<Pfc> pfcs = this.pfcService.getAll();
+        Page<Pfc> pfcs = this.pfcService.getAll(new PageRequest(0, 10));
         assertThat(pfcs, not(nullValue()));
-        assertThat(pfcs, not(empty()));
+        assertThat(pfcs.getContent(), hasSize(5));
     }
 
     @Test(expected = PfcNoEncontradoException.class)
@@ -114,26 +114,26 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
         this.pfcService.deleteAll();
 
         //When
-        this.pfcService.getAll();
+        this.pfcService.getAll(new PageRequest(0, 10));
 
         //Then throw an exception
     }
 
     @Test(expected = PfcNoEncontradoException.class)
     public void testSearchWithNullParameters() {
-        this.pfcService.search(null, null, null);
+        this.pfcService.search(null, null, null, new PageRequest(0, 10));
     }
 
     @Test(expected = PfcNoEncontradoException.class)
     public void testSearchWithoutResults() {
-        this.pfcService.search("Departamento", "Nombre", "ESTADO");
+        this.pfcService.search("Departamento", "Nombre", "ESTADO", new PageRequest(0, 10));
     }
 
     @Test
     public void testSearch() {
-        List<Pfc> pfcs = this.pfcService.search("a", "a", "E");
+        Page<Pfc> pfcs = this.pfcService.search("a", "a", "E", new PageRequest(0, 10));
         assertThat(pfcs, notNullValue());
-        assertThat(pfcs, hasSize(5));
+        assertEquals(pfcs.getTotalElements(), 5L);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
 
         //Then
         assertThat(deletedPfc.getDirectores(), is(nullValue()));
-        assertFalse(this.pfcService.getAll().contains(pfc));
+        assertFalse(this.pfcService.getAll(new PageRequest(0, 10)).getContent().contains(pfc));
 
         //TODO Extract to a new operation at the same interface
         for(Profesor p : directores) {

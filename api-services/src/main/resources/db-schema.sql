@@ -1,4 +1,6 @@
 
+DROP TABLE IF EXISTS profesor;
+
 CREATE TABLE if not exists profesor
 (
   id BIGINT AUTO_INCREMENT,
@@ -15,6 +17,8 @@ CREATE TABLE if not exists profesor
   UNIQUE (dni)
 );
 
+DROP TABLE IF EXISTS pfc;
+
 CREATE TABLE if not exists pfc
 (
   id BIGINT AUTO_INCREMENT,
@@ -27,7 +31,7 @@ CREATE TABLE if not exists pfc
   CONSTRAINT FK_DIRACADEMICO_TO_PROFESOR FOREIGN KEY (directorAcademico) REFERENCES profesor(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-
+DROP TABLE IF EXISTS alumno;
 CREATE TABLE if not exists alumno
 (
   id BIGINT AUTO_INCREMENT,
@@ -47,7 +51,7 @@ CREATE TABLE if not exists alumno
   CONSTRAINT FK_TO_PFC FOREIGN KEY (pfc) REFERENCES pfc (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-
+DROP TABLE IF EXISTS pfcs_profesores;
 CREATE TABLE if not exists pfcs_profesores
 (
   pfc_id bigint NOT NULL,

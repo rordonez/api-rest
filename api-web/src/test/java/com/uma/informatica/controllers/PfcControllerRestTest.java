@@ -57,7 +57,7 @@ public class PfcControllerRestTest {
                 .andExpect(jsonPath("$.content", hasSize(5)))
                 .andExpect(jsonPath("$.links", hasSize(1)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs")));
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs{?page,size,sort}")));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class PfcControllerRestTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.links", hasSize(0)));
+                .andExpect(jsonPath("$.links", hasSize(1)));
     }
 
     @Test

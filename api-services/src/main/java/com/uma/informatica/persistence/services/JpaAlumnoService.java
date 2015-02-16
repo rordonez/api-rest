@@ -50,9 +50,9 @@ public class JpaAlumnoService implements AlumnoService {
 
 
     @Override
-    public Collection<Alumno> search(String dni, String nombre, String apellidos) {
-        Collection<Alumno> alumnos = this.alumnoRepository.search(dni, nombre, apellidos);
-        if (alumnos.isEmpty()) {
+    public Page<Alumno> search(String dni, String nombre, String apellidos, Pageable pageable) {
+        Page<Alumno> alumnos = this.alumnoRepository.search(dni, nombre, apellidos, pageable);
+        if (alumnos.getTotalElements() == 0) {
             throw new AlumnoNoEncontradoException();
         }
         return alumnos;

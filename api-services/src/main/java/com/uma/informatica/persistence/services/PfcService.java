@@ -4,6 +4,8 @@ import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -17,13 +19,13 @@ public interface PfcService {
 
     List<Pfc> findByDepartamento(String departamentoId);
 
-    List<Pfc> search(String departamento, String nombre, String estado);
+    Page<Pfc> search(String departamento, String nombre, String estado, Pageable pageable);
 
     List<Pfc> findByName(String nombre);
 
     List<Pfc> findByEstado(EstadoPfc estado);
 
-    List<Pfc> getAll();
+    Page<Pfc> getAll(Pageable pageable);
 
     Profesor findByDirectorAcademico(long pfcId);
 

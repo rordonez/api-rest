@@ -23,7 +23,7 @@ public interface PfcRepository extends JpaRepository<Pfc, Long> {
     Page<Pfc> findByDepartamento(@Param("departamento") String departamento, Pageable pageable);
 
     @Query(value = "SELECT p from Pfc p where p.departamento like CONCAT('%',:departamento,'%') or p.nombre like CONCAT('%',:nombre,'%') or p.estado like CONCAT('%',:estado,'%')")
-    List<Pfc> search(@Param("departamento") String departamento, @Param("nombre") String nombre, @Param("estado") String estado);
+    Page<Pfc> search(@Param("departamento") String departamento, @Param("nombre") String nombre, @Param("estado") String estado, Pageable pageable);
 
     Page<Pfc> findByNombre(@Param("nombre") String nombre, Pageable pageable);
 

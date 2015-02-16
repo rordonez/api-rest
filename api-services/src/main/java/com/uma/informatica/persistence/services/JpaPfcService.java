@@ -10,7 +10,9 @@ import com.uma.informatica.persistence.repositories.AlumnoRepository;
 import com.uma.informatica.persistence.repositories.PfcRepository;
 import com.uma.informatica.persistence.repositories.ProfesorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,9 +40,9 @@ public class JpaPfcService implements PfcService {
     }
 
     @Override
-    public List<Pfc> search(String departamento, String nombre, String estado) {
-        List<Pfc> pfcs = this.pfcRepository.search(departamento, nombre, estado);
-        if(pfcs.isEmpty()) {
+    public Page<Pfc> search(String departamento, String nombre, String estado, Pageable pageable) {
+        Page<Pfc> pfcs = this.pfcRepository.search(departamento, nombre, estado, pageable);
+        if(pfcs.getTotalElements() == 0) {
             throw new PfcNoEncontradoException();
         }
         return pfcs;
@@ -61,9 +63,9 @@ public class JpaPfcService implements PfcService {
     }
 
     @Override
-    public List<Pfc> getAll() {
-        List<Pfc> pfcs = this.pfcRepository.findAll();
-        if(pfcs.isEmpty()) {
+    public Page<Pfc> getAll(Pageable pageable) {
+        Page<Pfc> pfcs = this.pfcRepository.findAll(pageable);
+        if(pfcs.getTotalElements() == 0) {
             throw new PfcNoEncontradoException();
         }
         return pfcs;

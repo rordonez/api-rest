@@ -110,8 +110,10 @@ public class AlumnoControllerRestTest {
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
-                .andExpect(jsonPath("$.content", hasSize(12)))
-                .andExpect(jsonPath("$.links", hasSize(0)));
+                .andExpect(jsonPath("$.content", hasSize(10)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
+
+                .andExpect(jsonPath("$.page.totalElements", is(12)));
     }
 
     @Test

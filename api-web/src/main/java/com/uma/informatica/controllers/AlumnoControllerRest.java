@@ -13,7 +13,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,8 +54,8 @@ public class AlumnoControllerRest  {
     }
 
     @RequestMapping (method = RequestMethod.POST)
-    public ResponseEntity<Resources<AlumnoResource>> searchAlumnos(@Valid @RequestBody SearchAlumnoRequestBody search) {
-        Resources<AlumnoResource> alumnosResources = new Resources<>(alumnoResourceAssembler.toResources(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos())));
+    public ResponseEntity<PagedResources<AlumnoResource>> searchAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @Valid @RequestBody SearchAlumnoRequestBody search) {
+        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos(), pageable), alumnoResourceAssembler);
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }

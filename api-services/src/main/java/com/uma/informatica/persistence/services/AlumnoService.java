@@ -18,7 +18,7 @@ public interface AlumnoService {
 
     Page<Alumno> getAll(Pageable pageable);
 
-    Collection<Alumno> search(String dni, String nombre, String apellidos);
+    Page<Alumno> search(String dni, String nombre, String apellidos, Pageable pageable);
 
     Collection<Alumno> findByNombre(String nombre);
 
