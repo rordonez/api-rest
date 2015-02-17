@@ -4,19 +4,16 @@ import com.uma.informatica.config.RestApiAppContext;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.transaction.Transactional;
 import java.util.Locale;
 
 import static org.hamcrest.Matchers.*;
@@ -27,13 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by rafa on 30/10/14.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RestApiAppContext.class}, initializers = PropertyMockingApplicationContextInitializer.class)
 @WebAppConfiguration
-@TransactionConfiguration(defaultRollback = true)
-@Transactional
 @ActiveProfiles("test")
-public class AlumnoControllerRestTest {
+public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     WebApplicationContext wac;

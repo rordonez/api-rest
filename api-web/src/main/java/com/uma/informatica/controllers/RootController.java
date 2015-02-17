@@ -1,7 +1,7 @@
 package com.uma.informatica.controllers;
 
 import com.uma.informatica.controllers.beans.APILinks;
-import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by rafa on 17/02/15.
  */
-@ExposesResourceFor(APILinks.class)
+@Profile("test")
 @RestController
 public class RootController {
 

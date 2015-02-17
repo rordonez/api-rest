@@ -1,5 +1,6 @@
 package com.uma.informatica.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.social.connect.ConnectionRepository;
@@ -10,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.inject.Inject;
 
 /**
  * Created by rafa on 11/06/14.
@@ -25,7 +24,7 @@ public class TwitterControllerRest {
 
     private ConnectionRepository connectionRepository;
 
-    @Inject
+    @Autowired
     public TwitterControllerRest(Twitter twitter, ConnectionRepository connectionRepository) {
         this.twitter = twitter;
         this.connectionRepository = connectionRepository;

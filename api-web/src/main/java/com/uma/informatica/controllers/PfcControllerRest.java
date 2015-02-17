@@ -1,12 +1,12 @@
 package com.uma.informatica.controllers;
 
-import com.uma.informatica.controllers.resources.AlumnoResource;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import com.uma.informatica.persistence.services.PfcService;
 import com.wordnik.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -17,14 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by rafaordonez on 26/02/14.
@@ -41,7 +37,7 @@ public class PfcControllerRest {
     private final PfcResourceAssembler pfcResourceAssembler;
     private final ProfesorResourceAssembler profesorResourceAssembler;
 
-    @Inject
+    @Autowired
     PfcControllerRest(PfcService pfcService, PfcResourceAssembler pfcResourceAssembler, ProfesorResourceAssembler profesorResourceAssembler) {
         this.pfcService = pfcService;
         this.pfcResourceAssembler = pfcResourceAssembler;

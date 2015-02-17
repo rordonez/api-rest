@@ -4,12 +4,10 @@ import com.uma.informatica.config.RestApiAppContext;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,14 +15,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by rafa on 17/02/15.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RestApiAppContext.class}, initializers = PropertyMockingApplicationContextInitializer.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
@@ -48,6 +43,6 @@ public class RootControllerTest extends AbstractTransactionalJUnit4SpringContext
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.content", hasSize(3)));
+                .andExpect(jsonPath("$.links", hasSize(3)));
     }
 }

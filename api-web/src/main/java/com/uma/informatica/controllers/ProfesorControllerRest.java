@@ -3,13 +3,13 @@ package com.uma.informatica.controllers;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import javax.validation.Valid;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -25,11 +25,9 @@ public class ProfesorControllerRest {
 
     private ProfesorService profesorService;
 
-
-
     private final ProfesorResourceAssembler profesorResourceAssembler;
 
-    @Inject
+    @Autowired
     public ProfesorControllerRest(ProfesorService profesorService, ProfesorResourceAssembler profesorResourceAssembler) {
         this.profesorService = profesorService;
         this.profesorResourceAssembler = profesorResourceAssembler;
@@ -51,7 +49,7 @@ public class ProfesorControllerRest {
 
     @RequestMapping (method = RequestMethod.POST)
     public ResponseEntity<ProfesorResource> createProfesor(@Valid @RequestBody Profesor profesor) {
-        return new ResponseEntity<ProfesorResource>(profesorResourceAssembler.toResource(profesorService.createProfesor(profesor.getDni(), profesor.getNombre(), profesor.getApellidos(), profesor.getTitulacion(), profesor.getTelefono(), profesor.getEmail())),HttpStatus.CREATED);
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(profesorService.createProfesor(profesor.getDni(), profesor.getNombre(), profesor.getApellidos(), profesor.getTitulacion(), profesor.getTelefono(), profesor.getEmail())),HttpStatus.CREATED);
     }
 
     @RequestMapping (method = RequestMethod.DELETE, value = "/{profesorId}")

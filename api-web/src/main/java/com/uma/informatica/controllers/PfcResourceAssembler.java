@@ -4,11 +4,11 @@ import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.controllers.resources.ProfesorResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +18,9 @@ import java.util.List;
 @Component
 public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResource> {
 
-    private String directorAcademicoRel = "directorAcademico";
-    private String directoresRel = "directores";
-
     private EntityLinks entityLinks;
 
-    @Inject
+    @Autowired
     public PfcResourceAssembler(EntityLinks entityLinks) {
         super(PfcControllerRest.class, PfcResource.class);
         this.entityLinks = entityLinks;
@@ -41,7 +38,6 @@ public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResou
         if(pfc.getDirectores() != null && !pfc.getDirectores().isEmpty()) {
 
             List<ProfesorResource> directores = new ArrayList<ProfesorResource>();
-            ProfesorResource profesorResources = new ProfesorResource(new Profesor());
             for(Profesor director : pfc.getDirectores()) {
                 directores.add(new ProfesorResource(entityLinks.linkToSingleResource(director)));
             }

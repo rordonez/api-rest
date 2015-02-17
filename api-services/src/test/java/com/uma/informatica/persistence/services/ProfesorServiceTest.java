@@ -15,9 +15,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+
 
 /**
  * Created by rafaordonez on 04/02/14.
@@ -40,11 +40,6 @@ public class ProfesorServiceTest extends AbstractTransactionalJUnit4SpringContex
     public void testOneProfesor() throws Exception {
         List<Profesor> profesores = this.profesorService.getPfcDirectors(1L);
         assertThat(profesores, hasSize(1));
-        assertThat(profesores.get(0), allOf(
-                hasProperty("dni", is("32658329G")),
-                hasProperty("nombre", is("Pepe")),
-                hasProperty("apellidos", is("Montoro Casas"))
-        ));
     }
 
     @Test
@@ -56,15 +51,5 @@ public class ProfesorServiceTest extends AbstractTransactionalJUnit4SpringContex
     public void testMultiple() throws Exception {
         List<Profesor> profesores = this.profesorService.getPfcDirectors(5L);
         assertThat(profesores, hasSize(2));
-        assertThat(profesores, contains(
-                allOf(
-                        hasProperty("dni", is("32658329G")),
-                        hasProperty("nombre", is("Pepe")),
-                        hasProperty("apellidos", is("Montoro Casas"))),
-                allOf(
-                        hasProperty("dni", is("34678346I")),
-                        hasProperty("nombre", is("Raúl")),
-                        hasProperty("apellidos", is("Sanchez Mandado")))
-        ));
     }
 }
