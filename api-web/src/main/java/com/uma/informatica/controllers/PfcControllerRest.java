@@ -1,5 +1,7 @@
 package com.uma.informatica.controllers;
 
+import com.uma.informatica.controllers.assemblers.PfcResourceAssembler;
+import com.uma.informatica.controllers.assemblers.ProfesorResourceAssembler;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Pfc;

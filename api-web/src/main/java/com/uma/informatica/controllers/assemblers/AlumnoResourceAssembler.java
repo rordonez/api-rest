@@ -1,5 +1,6 @@
-package com.uma.informatica.controllers;
+package com.uma.informatica.controllers.assemblers;
 
+import com.uma.informatica.controllers.AlumnoControllerRest;
 import com.uma.informatica.controllers.resources.AlumnoResource;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.persistence.models.Alumno;

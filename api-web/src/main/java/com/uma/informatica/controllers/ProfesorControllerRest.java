@@ -1,5 +1,6 @@
 package com.uma.informatica.controllers;
 
+import com.uma.informatica.controllers.assemblers.ProfesorResourceAssembler;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
