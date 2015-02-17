@@ -67,7 +67,7 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd")).failOnEmptyBeans(false);
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
         converters.add(new MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(true).build()));
     }

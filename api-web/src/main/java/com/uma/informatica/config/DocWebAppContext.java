@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -52,6 +54,7 @@ public class DocWebAppContext extends WebMvcConfigurerAdapter {
     @Bean //Don't forget the @Bean annotation
     public SwaggerSpringMvcPlugin customImplementation(){
         return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
+                .ignoredParameterTypes(Pageable.class, PagedResourcesAssembler.class)
                 .apiInfo(apiInfo());
 //                .includePatterns(".*pet.*");
     }
