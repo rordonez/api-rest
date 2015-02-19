@@ -2,6 +2,7 @@ package com.uma.informatica.controllers;
 
 import com.uma.informatica.config.RestApiAppContext;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
+import org.hamcrest.core.AnyOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Locale;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.ALLOW;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,7 +38,10 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
     @Before
     public void setUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+                                        .dispatchOptions(true)
+                                        .build();
     }
 
     @Test
@@ -58,6 +63,14 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(jsonPath("$.page.totalElements", is(13)))
                 .andExpect(jsonPath("$.page.totalPages", is(2)))
                 .andExpect(jsonPath("$.page.size", is(10)));
+    }
+
+    @Test
+    public void alumnosOptions_ShouldRender204() throws Exception {
+        mockMvc.perform(options("/alumnos"))
+
+                .andExpect(status().isOk())
+                .andExpect(header().string(ALLOW, AnyOf.<String> anyOf(containsString("GET"), containsString("PUT"), containsString("POST"), containsString("OPTIONS"))));
     }
 
     @Test

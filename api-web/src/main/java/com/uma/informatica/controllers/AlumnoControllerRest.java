@@ -1,5 +1,7 @@
 package com.uma.informatica.controllers;
 
+import com.uma.informatica.controllers.assemblers.AlumnoResourceAssembler;
+import com.uma.informatica.controllers.assemblers.PfcResourceAssembler;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
 import com.uma.informatica.controllers.resources.AlumnoResource;
@@ -14,12 +16,15 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import static com.uma.informatica.controllers.utils.ControllerUtils.allows;
 
 /**
  * Created by rafaordonez on 16/02/14.
@@ -65,6 +70,11 @@ public class AlumnoControllerRest  {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
     }
 
+    @RequestMapping (method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> alumnosOptions() {
+        return allows(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.OPTIONS);
+    }
+
 
     @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}")
     public ResponseEntity<AlumnoResource> getAlumno(@PathVariable long alumnoId) {
@@ -85,6 +95,23 @@ public class AlumnoControllerRest  {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.deleteAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{alumnoId}")
+    public ResponseEntity<Void> alumnoOptions(@PathVariable long alumnoId) {
+        return allows(HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.OPTIONS);
+    }
+
+
+    @RequestMapping (method = RequestMethod.DELETE, value = "/{alumnoId}/pfc")
+    public ResponseEntity<PfcResource> deletePfc(@PathVariable long alumnoId) {
+        PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId));
+        return new ResponseEntity<>(pfcResource, HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{alumnoId}/pfc")
+    public ResponseEntity<Void> alumnoPfcOptions(@PathVariable long alumnoId) {
+        return allows(HttpMethod.DELETE, HttpMethod.OPTIONS);
+    }
+
 
     @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/pfc/{pfcId}")
     public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @PathVariable long pfcId) {
@@ -92,9 +119,9 @@ public class AlumnoControllerRest  {
         return new ResponseEntity<>(pfcResource, HttpStatus.CREATED);
     }
 
-    @RequestMapping (method = RequestMethod.DELETE, value = "/{alumnoId}/pfc")
-    public ResponseEntity<PfcResource> deletePfc(@PathVariable long alumnoId) {
-        PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.deletePfcFromAlumno(alumnoId));
-        return new ResponseEntity<>(pfcResource, HttpStatus.ACCEPTED);
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{alumnoId}/pfc/{pfcId}")
+    public ResponseEntity<Void> alumnosPfcOperacionesOptions(@PathVariable long alumnoId, @PathVariable long pfcId) {
+        return allows(HttpMethod.POST, HttpMethod.OPTIONS);
     }
+
 }

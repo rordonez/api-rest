@@ -7,6 +7,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 
 
 /**
@@ -28,6 +29,17 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
         }
         servletContext.setInitParameter("spring.profiles.active", springProfile);
         registerProxyFilter(servletContext, "springSecurityFilterChain");
+    }
+
+    /**
+     *
+     * Este método configura el Servlet para que acepte peticiones OPTIONS
+     *
+     * @param registration
+     */
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        registration.setInitParameter("dispatchOptionsRequest", "true");
     }
 
     @Override

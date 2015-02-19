@@ -15,6 +15,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+
+import static com.uma.informatica.controllers.utils.ControllerUtils.allows;
 
 /**
  * Created by rafaordonez on 26/02/14.
@@ -65,6 +68,11 @@ public class PfcControllerRest {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.createPfc(pfc.getNombre(), pfc.getDepartamento())), HttpStatus.CREATED);
     }
 
+    @RequestMapping (method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> pfcsOptions() {
+        return allows(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS);
+    }
+
     @RequestMapping (method = RequestMethod.GET, value = "/{pfcId}")
     public ResponseEntity<PfcResource> getPfc(@PathVariable long pfcId) {
     	return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.findById(pfcId)), HttpStatus.OK);
@@ -81,6 +89,22 @@ public class PfcControllerRest {
         return new ResponseEntity<>(pfcResourceAssembler.toResource(pfcService.updatePfc(pfcId, pfc.getNombre(), pfc.getDepartamento(), pfc.getFechaInicio(), pfc.getFechaFin(), pfc.getEstado())),HttpStatus.ACCEPTED);
     }
 
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{pfcId}")
+    public ResponseEntity<Void> pfcOptions() {
+        return allows(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.PATCH, HttpMethod.OPTIONS);
+    }
+
+
+    @RequestMapping (method = RequestMethod.DELETE, value = "/{pfcId}/directoracademico")
+    public ResponseEntity<ProfesorResource> deleteDirectorAcademico(@PathVariable long pfcId) {
+        return new ResponseEntity<>(profesorResourceAssembler.toResource(pfcService.deleteDirectorAcademico(pfcId)), HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{pfcId}/directoracademico")
+    public ResponseEntity<Void> directorAcademicoOptions() {
+        return allows(HttpMethod.DELETE, HttpMethod.OPTIONS);
+    }
+
 
 
     @RequestMapping (method = RequestMethod.PUT, value = "/{pfcId}/directoracademico/{profesorId}")
@@ -88,9 +112,9 @@ public class PfcControllerRest {
         return new ResponseEntity<>(profesorResourceAssembler.toResource(pfcService.changeDirectorAcademico(pfcId, profesorId)), HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping (method = RequestMethod.DELETE, value = "/{pfcId}/directoracademico")
-    public ResponseEntity<ProfesorResource> deleteDirectorAcademico(@PathVariable long pfcId) {
-        return new ResponseEntity<>(profesorResourceAssembler.toResource(pfcService.deleteDirectorAcademico(pfcId)), HttpStatus.ACCEPTED);
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{pfcId}/directoracademico/{profesorId}")
+    public ResponseEntity<Void> directorAcademicoSeleccionadoOptions() {
+        return allows(HttpMethod.PUT, HttpMethod.OPTIONS);
     }
 
 
@@ -107,5 +131,10 @@ public class PfcControllerRest {
     	Resources<ProfesorResource> profesoresResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(pfcService.deleteDirectors(pfcId)));
 
         return new ResponseEntity<> (profesoresResources, HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping (method = RequestMethod.OPTIONS, value = "/{pfcId}/directores")
+    public ResponseEntity<Void> directoresOptions() {
+        return allows(HttpMethod.DELETE, HttpMethod.PUT, HttpMethod.OPTIONS);
     }
 }
