@@ -58,14 +58,14 @@ public class AlumnoControllerRest  {
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
-    @RequestMapping (method = RequestMethod.POST)
+    @RequestMapping (method = RequestMethod.POST, params = {"search=true"})
     public ResponseEntity<PagedResources<AlumnoResource>> searchAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @Valid @RequestBody SearchAlumnoRequestBody search) {
         PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos(), pageable), alumnoResourceAssembler);
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
-    @RequestMapping (method = RequestMethod.PUT)
+    @RequestMapping (method = RequestMethod.POST)
     public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
         return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento())), HttpStatus.CREATED);
     }

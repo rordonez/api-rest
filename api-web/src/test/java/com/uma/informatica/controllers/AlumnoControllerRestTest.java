@@ -70,7 +70,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
         mockMvc.perform(options("/alumnos"))
 
                 .andExpect(status().isOk())
-                .andExpect(header().string(ALLOW, AnyOf.<String> anyOf(containsString("GET"), containsString("PUT"), containsString("POST"), containsString("OPTIONS"))));
+                .andExpect(header().string(ALLOW, AnyOf.<String>anyOf(containsString("GET"), containsString("PUT"), containsString("POST"), containsString("OPTIONS"))));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
     @Test
     public void searchAlumnos_AlumnoNoEncontradoException_ShouldRender_404() throws Exception {
-        mockMvc.perform(post("/alumnos.json")
+        mockMvc.perform(post("/alumnos.json?search=true")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .content(mockSearchAlumnosAlumnoNoEncontradoException()))
@@ -110,7 +110,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
     @Test
     public void searchAlumnos_ShouldRender_200() throws Exception {
-        mockMvc.perform(post("/alumnos.json")
+        mockMvc.perform(post("/alumnos.json?search=true")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .content(mockSearchAlumnos()))
@@ -126,7 +126,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
     @Test
     public void createAlumno_ShouldRender201View() throws Exception {
 
-        mockMvc.perform(put("/alumnos.json")
+        mockMvc.perform(post("/alumnos.json")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .content(mockAlumnoJson()))
@@ -154,7 +154,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
     @Test
     public void createAlumno_MethodArgumentNotValidException_ShouldRender400() throws Exception {
 
-        mockMvc.perform(put("/alumnos.json")
+        mockMvc.perform(post("/alumnos.json")
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .locale(new Locale("ES"))
