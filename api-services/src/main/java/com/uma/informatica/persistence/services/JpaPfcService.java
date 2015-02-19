@@ -212,6 +212,7 @@ public class JpaPfcService implements PfcService {
             throw new AlumnoSinPfcException(alumnoId);
         }
         Pfc pfc = alumno.getPfc();
+
         alumno.setPfc(null);
         this.alumnoRepository.save(alumno);
         return pfc;

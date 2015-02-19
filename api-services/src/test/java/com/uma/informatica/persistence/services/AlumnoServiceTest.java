@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -39,6 +40,7 @@ import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(classes = ServiceContext.class, initializers = PropertyMockingApplicationContextInitializer.class)
 @ActiveProfiles("test")
+@DirtiesContext
 public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired

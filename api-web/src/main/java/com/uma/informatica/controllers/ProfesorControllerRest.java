@@ -5,7 +5,11 @@ import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -13,10 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static com.uma.informatica.controllers.utils.ControllerUtils.allows;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by rafaordonez on 02/03/14.
@@ -37,9 +40,15 @@ public class ProfesorControllerRest {
     }
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<Resources<ProfesorResource>> getProfesores() {
-        Resources<ProfesorResource> profesorResources = new Resources<>(profesorResourceAssembler.toResources(profesorService.getAll()));
-        profesorResources.add(linkTo(methodOn(ProfesorControllerRest.class).getProfesores()).withSelfRel());
+    public ResponseEntity<PagedResources<ProfesorResource>> getProfesores(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
+        PagedResources<ProfesorResource> profesorResources = pagedAssembler.toResource(profesorService.getAll(pageable), profesorResourceAssembler);
+
+        return new ResponseEntity<>(profesorResources, HttpStatus.OK);
+    }
+
+    @RequestMapping (method = RequestMethod.GET, params = {"ids"})
+    public ResponseEntity<Resources<ProfesorResource>> getProfesoresByIds(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @RequestParam("ids") List<Long> ids) {
+        Resources<ProfesorResource> profesorResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(profesorService.getAll(ids)));
 
         return new ResponseEntity<>(profesorResources, HttpStatus.OK);
     }

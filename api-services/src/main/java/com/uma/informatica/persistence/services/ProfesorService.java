@@ -4,6 +4,8 @@ package com.uma.informatica.persistence.services;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +25,9 @@ public interface ProfesorService {
 
     List<Profesor> findByNombreYApellidos(String name, String lastName);
 
-    List<Profesor> getAll();
+    Page<Profesor> getAll(Pageable pageable);
+
+    List<Profesor> getAll(List<Long> ids);
 
     Profesor createProfesor(String dni, String name, String apellidos, TitulacionEnum titulacion, String telefono, String email);
 

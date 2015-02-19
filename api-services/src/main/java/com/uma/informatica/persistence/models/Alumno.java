@@ -8,7 +8,6 @@ import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,7 +15,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Relation(collectionRelation="alumnos")
 @Entity
 @Table(name = "alumno")
 public class Alumno implements Identifiable<Long>, Serializable {
@@ -42,7 +40,7 @@ public class Alumno implements Identifiable<Long>, Serializable {
     private String dni;
 
     @JsonIgnore
-    @ManyToOne( cascade = {CascadeType.ALL})
+    @ManyToOne( cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "pfc")
     private Pfc pfc;
 

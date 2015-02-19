@@ -14,11 +14,4 @@ public class ProfesorResource extends Resource<Profesor> {
 		super(content, links);
 	}
 
-	public ProfesorResource(Iterable<Link> links) {
-		super(new Profesor(), links);
-	}
-
-	public ProfesorResource(Link link) {
-		super(new Profesor(), link);
-	}
 }

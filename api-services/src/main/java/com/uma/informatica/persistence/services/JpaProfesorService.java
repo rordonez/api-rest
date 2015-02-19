@@ -8,6 +8,8 @@ import com.uma.informatica.persistence.repositories.PfcRepository;
 import com.uma.informatica.persistence.repositories.ProfesorRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +63,13 @@ public class JpaProfesorService implements ProfesorService {
     }
 
     @Override
-    public List<Profesor> getAll() {
-        return this.profesorRepository.findAll();
+    public Page<Profesor> getAll(Pageable pageable) {
+        return this.profesorRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Profesor> getAll(List<Long> ids) {
+        return this.profesorRepository.findAll(ids);
     }
 
     @Override

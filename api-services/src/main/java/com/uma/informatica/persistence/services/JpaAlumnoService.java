@@ -113,6 +113,8 @@ public class JpaAlumnoService implements AlumnoService {
     public Alumno deletePfc(long alumnoId) {
         Alumno alumno = this.findById(alumnoId);
         alumno.setPfc(null);
+
+        this.alumnoRepository.save(alumno);
         return alumno;
     }
 }

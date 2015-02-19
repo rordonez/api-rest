@@ -1,6 +1,8 @@
 package com.uma.informatica.controllers;
 
 import com.uma.informatica.config.RestApiAppContext;
+import com.uma.informatica.controllers.assemblers.AlumnoResourceAssemblerLazy;
+import com.uma.informatica.controllers.assemblers.PfcResourceAssembler;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import org.hamcrest.core.AnyOf;
 import org.junit.Before;
@@ -47,7 +49,6 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
     @Test
     public void getAll_ShouldRender_200() throws Exception {
         mockMvc.perform(get("/alumnos.json")
-                .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
@@ -183,12 +184,12 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.dni", hasToString("00000000A")))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))
-                .andExpect(jsonPath("$.pfc.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.pfc.links[0].href", endsWith("/pfcs/5")));
+                .andExpect(jsonPath("$.links[1].rel", is(AlumnoResourceAssemblerLazy.PFC_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/pfcs/5")));
     }
 
     @Test
@@ -215,14 +216,11 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(status().isAccepted())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))
-
-                .andExpect(jsonPath("$.pfc.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.pfc.links[0].href", endsWith("/pfcs/5")))
-                .andExpect(jsonPath("$.pfc.directores", is(nullValue())))
-                .andExpect(jsonPath("$.pfc.directorAcademico", is(nullValue())))
+                .andExpect(jsonPath("$.links[1].rel", is(AlumnoResourceAssemblerLazy.PFC_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/pfcs/5")))
 
                 .andExpect(jsonPath("$.domicilio", is("Domicilio actualizado")))
                 .andExpect(jsonPath("$.localidad", is("Localidad actualizada")))
@@ -243,11 +241,12 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
                 .andExpect(status().isAccepted())
                 .andExpect(content().encoding("UTF-8"))
-                .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))
-                .andExpect(jsonPath("$.pfc.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.pfc.links[0].href", endsWith("/pfcs/5")))
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/pfcs/5")))
+                .andExpect(jsonPath("$.links[1].rel", is(AlumnoResourceAssemblerLazy.PFC_REL)))
+
                 .andExpect(jsonPath("$.domicilio", is("Domicilio actualizado")))
                 .andExpect(jsonPath("$.localidad", is("Localidad actualizada")))
                 .andExpect(jsonPath("$.pais", is("Pais actualizado")))
@@ -265,13 +264,14 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .content(mockUpdateAlumnoWithOnlyEmailJson()))
 
                 .andExpect(status().isAccepted())
-                .andExpect(content().encoding("UTF-8"))
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))
-                .andExpect(jsonPath("$.pfc.links", hasSize(1)))
-                .andExpect(jsonPath("$.pfc.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.pfc.links[0].href", endsWith("/pfcs/5")))
+                .andExpect(jsonPath("$.links[1].rel", is(AlumnoResourceAssemblerLazy.PFC_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/pfcs/5")))
+
                 .andExpect(jsonPath("$.domicilio", is("sdagasg")))
                 .andExpect(jsonPath("$.localidad", is("sdagf")))
                 .andExpect(jsonPath("$.pais", is("sdag")))
@@ -316,11 +316,11 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
                 .andExpect(status().isAccepted())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))                .andExpect(jsonPath("$.dni", hasToString("00000000A")))
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))
-                .andExpect(jsonPath("$.pfc.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.pfc.links[0].href", endsWith("/pfcs/5")));
+                .andExpect(jsonPath("$.links[1].rel", is(AlumnoResourceAssemblerLazy.PFC_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/pfcs/5")));
     }
 
 
@@ -350,13 +350,11 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")))
-                .andExpect(jsonPath("$.directores", hasSize(1)))
-                .andExpect(jsonPath("$.directores[0].links", hasSize(1)))
-                .andExpect(jsonPath("$.directores[0].links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.directores[0].links[0].href", endsWith("/profesores/1")));
+                .andExpect(jsonPath("$.links[1].rel", is(PfcResourceAssembler.DIRECTORES_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/profesores?ids=1")));
     }
 
 
@@ -368,15 +366,11 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/5")))
-
-                .andExpect(jsonPath("$.directores", hasSize(2)))
-                .andExpect(jsonPath("$.directores[0].links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.directores[0].links[0].href", endsWith("/profesores/1")))
-                .andExpect(jsonPath("$.directores[1].links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.directores[1].links[0].href", endsWith("/profesores/2")))
+                .andExpect(jsonPath("$.links[1].rel", is(PfcResourceAssembler.DIRECTORES_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/profesores?ids=1&ids=2")))
 
                 .andExpect(jsonPath("$.directorAcademico", is(nullValue())));
     }

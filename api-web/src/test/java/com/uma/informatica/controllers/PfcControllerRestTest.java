@@ -1,6 +1,7 @@
 package com.uma.informatica.controllers;
 
 import com.uma.informatica.config.RestApiAppContext;
+import com.uma.informatica.controllers.assemblers.PfcResourceAssembler;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import com.uma.informatica.persistence.models.enums.EstadoPfc;
 import org.junit.Before;
@@ -43,11 +44,11 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
     @Test
     public void getAll_ShouldRender200() throws Exception {
         mockMvc.perform(get("/pfcs.json")
-                .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
                 .andExpect(jsonPath("$.content", hasSize(5)))
                 .andExpect(jsonPath("$.links", hasSize(1)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
@@ -55,27 +56,29 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
     }
 
     @Test
-    public void searchAlumnos_ShouldRender_200() throws Exception {
+    public void searchPfcs_ShouldRender_200() throws Exception {
         mockMvc.perform(get("/pfcs.json?estado=EMPEZADO&search=true")
-                .accept(IntegrationTestUtil.applicationJsonMediaType)
-                .contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.links", hasSize(1)));
+                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs{?page,size,sort}")));
+
     }
 
     @Test
     public void searchAlumnos_PfcNoEncontradoException_ShouldRender_404() throws Exception {
         mockMvc.perform(get("/pfcs.json?search=true")
-                .accept(IntegrationTestUtil.applicationJsonMediaType)
-                .contentType(IntegrationTestUtil.applicationJsonMediaType))
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isNotFound())
-
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
+
                 .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc")));
 
     }
@@ -109,6 +112,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
+
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].message", containsString("Could not read JSON: Unexpected character")));
     }
@@ -125,6 +129,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
+
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].message", is("Parámetro: departamento no puede ser null")));
     }
@@ -132,27 +137,28 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
     @Test
     public void getPfc_ShouldRender200() throws Exception {
         mockMvc.perform(get("/pfcs/{pfcId}.json", 1L)
-            .accept(IntegrationTestUtil.applicationJsonMediaType))
+                .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
-                .andExpect(jsonPath("$.links", hasSize(1)))
+
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")))
+                .andExpect(jsonPath("$.links[1].rel", is(PfcResourceAssembler.DIRECTORES_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/profesores?ids=1")));
 
-                .andExpect(jsonPath("$.directores", hasSize(1)))
-                .andExpect(jsonPath("$.directores[0].links", hasSize(1)))
-                .andExpect(jsonPath("$.directores[0].links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.directores[0].links[0].href", endsWith("/profesores/1")));
     }
 
     @Test
     public void getPfc_ShouldRender404() throws Exception {
         mockMvc.perform(get("/pfcs/{pfcId}.json", 0L)
         .accept(IntegrationTestUtil.applicationJsonMediaType))
+
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
+
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].message", is("No se encontró ningún pfc con id: 0")));
     }
@@ -164,6 +170,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
 
                 .andExpect(status().isAccepted())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
                 .andExpect(jsonPath("$.links", hasSize(1)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")));
@@ -191,9 +198,11 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(status().isAccepted())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
-                .andExpect(jsonPath("$.links", hasSize(1)))
+                .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")));
+                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs/1")))
+                .andExpect(jsonPath("$.links[1].rel", is(PfcResourceAssembler.DIRECTORES_REL)))
+                .andExpect(jsonPath("$.links[1].href", endsWith("/profesores?ids=1")));
     }
 
     @Test
@@ -202,6 +211,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .accept(IntegrationTestUtil.applicationJsonMediaType)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .content("{}"))
+
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
@@ -333,7 +343,9 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].links[0].href", endsWith("/profesores/1")));
+                .andExpect(jsonPath("$.content[0].links[0].href", endsWith("/profesores/1")))
+
+                .andExpect(jsonPath("$.links", hasSize(0)));
     }
 
     @Test
