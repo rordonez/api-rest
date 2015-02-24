@@ -50,7 +50,7 @@ public class PfcControllerRest {
     }
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<PagedResources<PfcResource>> getPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
+    public ResponseEntity<PagedResources<PfcResource>> getPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Pfc> pagedAssembler) {
         PagedResources<PfcResource> pfcsResources = pagedAssembler.toResource(pfcService.getAll(pageable), pfcResourceAssembler);
 
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
@@ -58,7 +58,7 @@ public class PfcControllerRest {
 
 
     @RequestMapping (method = RequestMethod.GET, params = {"search=true"})
-    public ResponseEntity<PagedResources<PfcResource>> searchPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado) {
+    public ResponseEntity<PagedResources<PfcResource>> searchPfcs(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Pfc> pagedAssembler, @RequestParam(required = false) String departamento, @RequestParam(required = false) String nombre, @RequestParam(required = false) EstadoPfc estado) {
         PagedResources<PfcResource> pfcsResources = pagedAssembler.toResource(pfcService.search(departamento, nombre, estado != null ? estado.name() : null, pageable), pfcResourceAssembler);
         return new ResponseEntity<> (pfcsResources, HttpStatus.OK);
     }

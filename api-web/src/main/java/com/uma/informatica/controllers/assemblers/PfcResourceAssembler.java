@@ -4,6 +4,7 @@ import com.uma.informatica.controllers.PfcControllerRest;
 import com.uma.informatica.controllers.resources.PfcResource;
 import com.uma.informatica.persistence.models.Pfc;
 import com.uma.informatica.persistence.models.Profesor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;
@@ -43,13 +44,13 @@ public class PfcResourceAssembler extends ResourceAssemblerSupport<Pfc, PfcResou
     }
 
     private void addDirectorAcademicoLink(Pfc pfc, PfcResource pfcResource) {
-        if(pfc.getDirectorAcademico() != null) {
+        if(pfc.getDirectorAcademico() != null && Hibernate.isInitialized(pfc.getDirectorAcademico())) {
             pfcResource.add(entityLinks.linkToSingleResource(pfc.getDirectorAcademico()).withRel(DIRECTOR_ACADEMICO_REL));
         }
     }
 
     private void addDirectoresLink(Pfc pfc, PfcResource pfcResource) {
-        if(pfc.getDirectores() != null && !pfc.getDirectores().isEmpty()) {
+        if(pfc.getDirectores() != null && !pfc.getDirectores().isEmpty() && Hibernate.isInitialized(pfc.getDirectores())) {
 
             List<Long> ids = new ArrayList<Long>();
             for(Profesor director : pfc.getDirectores()) {

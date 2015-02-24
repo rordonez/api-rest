@@ -1,6 +1,6 @@
 package com.uma.informatica.controllers;
 
-import com.uma.informatica.controllers.assemblers.AlumnoResourceAssemblerLazy;
+import com.uma.informatica.controllers.assemblers.AlumnoResourceAssembler;
 import com.uma.informatica.controllers.assemblers.PfcResourceAssembler;
 import com.uma.informatica.controllers.beans.SearchAlumnoRequestBody;
 import com.uma.informatica.controllers.beans.UpdateAlumnoBody;
@@ -39,35 +39,35 @@ public class AlumnoControllerRest  {
     private AlumnoService alumnoService;
     private PfcService pfcService;
 
-    private final AlumnoResourceAssemblerLazy alumnoResourceAssemblerLazy;
+    private final AlumnoResourceAssembler alumnoResourceAssembler;
     private final PfcResourceAssembler pfcResourceAssembler;
 
     @Autowired
-    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, AlumnoResourceAssemblerLazy alumnoResourceAssemblerLazy, PfcResourceAssembler pfcResourceAssembler) {
+    public AlumnoControllerRest(AlumnoService alumnoService, PfcService pfcService, AlumnoResourceAssembler alumnoResourceAssembler, PfcResourceAssembler pfcResourceAssembler) {
         this.alumnoService = alumnoService;
         this.pfcService = pfcService;
-        this.alumnoResourceAssemblerLazy = alumnoResourceAssemblerLazy;
+        this.alumnoResourceAssembler = alumnoResourceAssembler;
         this.pfcResourceAssembler = pfcResourceAssembler;
     }
 
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<PagedResources<AlumnoResource>> getAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
-        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.getAll(pageable), alumnoResourceAssemblerLazy);
+    public ResponseEntity<PagedResources<AlumnoResource>> getAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Alumno> pagedAssembler) {
+        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.getAll(pageable), alumnoResourceAssembler);
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
     @RequestMapping (method = RequestMethod.POST, params = {"search=true"})
-    public ResponseEntity<PagedResources<AlumnoResource>> searchAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @Valid @RequestBody SearchAlumnoRequestBody search) {
-        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.search(search.getDni(), search.getNombre(), search.getApellidos(), pageable), alumnoResourceAssemblerLazy);
+    public ResponseEntity<PagedResources<AlumnoResource>> searchAlumnos(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Alumno> pagedAssembler, @Valid @RequestBody SearchAlumnoRequestBody body) {
+        PagedResources<AlumnoResource> alumnosResources = pagedAssembler.toResource(alumnoService.search(body.getDni(), body.getNombre(), body.getApellidos(), pageable), alumnoResourceAssembler);
 
         return new ResponseEntity<> (alumnosResources, HttpStatus.OK);
     }
 
     @RequestMapping (method = RequestMethod.POST)
     public ResponseEntity<AlumnoResource> createAlumno(@Valid @RequestBody Alumno alumno) {
-        AlumnoResource alumnoResource = alumnoResourceAssemblerLazy.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento()));
+        AlumnoResource alumnoResource = alumnoResourceAssembler.toResource(alumnoService.createAlumno(alumno.getDni(), alumno.getNombre(), alumno.getApellidos(), alumno.getTitulacion().name(), alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getTelefono(), alumno.getEmail(), alumno.getFechaNacimiento()));
 
         return new ResponseEntity<>(alumnoResource, HttpStatus.CREATED);
     }
@@ -80,7 +80,7 @@ public class AlumnoControllerRest  {
 
     @RequestMapping (method = RequestMethod.GET, value = "/{alumnoId}")
     public ResponseEntity<AlumnoResource> getAlumno(@PathVariable long alumnoId) {
-        AlumnoResource alumnoResource = alumnoResourceAssemblerLazy.toResource(alumnoService.findById(alumnoId));
+        AlumnoResource alumnoResource = alumnoResourceAssembler.toResource(alumnoService.findById(alumnoId));
         return new ResponseEntity<>(alumnoResource, HttpStatus.OK);
     }
 
@@ -89,13 +89,13 @@ public class AlumnoControllerRest  {
     public ResponseEntity<AlumnoResource> updateAlumno(@PathVariable long alumnoId, @NotNull @Valid @RequestBody UpdateAlumnoBody alumno) {
         Alumno updatedAlumno = alumnoService.updateAlumno(alumnoId, alumno.getDomicilio(), alumno.getLocalidad(), alumno.getPais(), alumno.getCodigoPostal(), alumno.getEmail(), alumno.getTelefono());
 
-        return new ResponseEntity<>(alumnoResourceAssemblerLazy.toResource(updatedAlumno), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(updatedAlumno), HttpStatus.ACCEPTED);
     }
 
 
     @RequestMapping (method = RequestMethod.DELETE, value = "/{alumnoId}")
     public ResponseEntity<AlumnoResource> removeAlumno(@PathVariable long alumnoId) {
-        return new ResponseEntity<>(alumnoResourceAssemblerLazy.toResource(alumnoService.deleteAlumno(alumnoId)), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(alumnoResourceAssembler.toResource(alumnoService.deleteAlumno(alumnoId)), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping (method = RequestMethod.OPTIONS, value = "/{alumnoId}")

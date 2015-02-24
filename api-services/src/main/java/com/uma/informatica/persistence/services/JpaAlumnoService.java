@@ -4,6 +4,7 @@ import com.uma.informatica.core.exceptions.AlumnoNoEncontradoException;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.enums.TitulacionEnum;
 import com.uma.informatica.persistence.repositories.AlumnoRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ public class JpaAlumnoService implements AlumnoService {
         if(alumnosPage.getTotalElements() == 0) {
             throw new AlumnoNoEncontradoException();
         }
+
         return alumnosPage;
     }
 
@@ -39,6 +41,7 @@ public class JpaAlumnoService implements AlumnoService {
         if(alumno == null) {
             throw new AlumnoNoEncontradoException(alumnoId);
         }
+        Hibernate.initialize(alumno.getPfc());
         return alumno;
     }
 

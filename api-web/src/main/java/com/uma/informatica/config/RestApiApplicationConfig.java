@@ -2,6 +2,7 @@ package com.uma.informatica.config;
 
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;
@@ -63,7 +64,9 @@ public class RestApiApplicationConfig extends AbstractAnnotationConfigDispatcher
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-        return new Filter[] { characterEncodingFilter};
+
+        ShallowEtagHeaderFilter shallowEtagHeaderFilter = new ShallowEtagHeaderFilter();
+        return new Filter[] { characterEncodingFilter, shallowEtagHeaderFilter};
     }
 
     private void registerProxyFilter(ServletContext servletContext, String name) {

@@ -40,14 +40,14 @@ public class ProfesorControllerRest {
     }
 
     @RequestMapping (method = RequestMethod.GET)
-    public ResponseEntity<PagedResources<ProfesorResource>> getProfesores(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler) {
+    public ResponseEntity<PagedResources<ProfesorResource>> getProfesores(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Profesor> pagedAssembler) {
         PagedResources<ProfesorResource> profesorResources = pagedAssembler.toResource(profesorService.getAll(pageable), profesorResourceAssembler);
 
         return new ResponseEntity<>(profesorResources, HttpStatus.OK);
     }
 
     @RequestMapping (method = RequestMethod.GET, params = {"ids"})
-    public ResponseEntity<Resources<ProfesorResource>> getProfesoresByIds(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler pagedAssembler, @RequestParam("ids") List<Long> ids) {
+    public ResponseEntity<Resources<ProfesorResource>> getProfesoresByIds(@PageableDefault(size = 10) Pageable pageable, PagedResourcesAssembler<Profesor> pagedAssembler, @RequestParam("ids") List<Long> ids) {
         Resources<ProfesorResource> profesorResources = new Resources<ProfesorResource>(profesorResourceAssembler.toResources(profesorService.getAll(ids)));
 
         return new ResponseEntity<>(profesorResources, HttpStatus.OK);
