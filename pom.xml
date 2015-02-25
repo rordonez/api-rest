@@ -171,6 +171,18 @@
             </dependency>
 
 
+<<<<<<< HEAD
+=======
+            <!-- OTHER DEPENDENCIES -->
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.7.2</version>
+            </dependency>
+
+
+>>>>>>> 25dea23ac33755770264863f65a6e850baa29233
             <!-- LogBack dependencies -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
