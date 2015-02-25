@@ -315,7 +315,9 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isAccepted())
-                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))                .andExpect(jsonPath("$.dni", hasToString("00000000A")))
+                .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
+
+                .andExpect(jsonPath("$.dni", hasToString("00000000A")))
                 .andExpect(jsonPath("$.links", hasSize(2)))
                 .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
                 .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos/1")))

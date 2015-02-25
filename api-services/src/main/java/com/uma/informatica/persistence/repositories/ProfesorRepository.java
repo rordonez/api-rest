@@ -8,14 +8,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.util.List;
 
 /**
  * Repository for dealing with {@link Profesor profesor} records.
  */
-@RestResource(path = "profesors", rel = "profesors")
 public interface ProfesorRepository extends JpaRepository<Profesor, Long>, JpaSpecificationExecutor<Profesor> {
 
     @Query("select p from Pfc p INNER JOIN p.directores c where c.id = :profesorId and (LOWER(p.nombre) LIKE :q)")
