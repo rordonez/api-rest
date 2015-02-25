@@ -1,6 +1,5 @@
 package com.uma.informatica.persistence.services;
 
-import com.google.common.collect.Lists;
 import com.uma.informatica.core.exceptions.*;
 import com.uma.informatica.core.profiles.PropertyMockingApplicationContextInitializer;
 import com.uma.informatica.persistence.configuration.ServiceContext;
@@ -20,6 +19,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -224,7 +224,7 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
         Pfc pfc = this.pfcService.findById(5L);
         assertThat(pfc, hasProperty("directores", hasSize(2)));
 
-        this.pfcService.addDirectors(5L, Lists.newArrayList(3L));
+        this.pfcService.addDirectors(5L, Arrays.asList(3L));
 
         entityManager.flush();
 
@@ -234,12 +234,12 @@ public class PfcServiceTest extends AbstractTransactionalJUnit4SpringContextTest
 
     @Test(expected = PfcNoEncontradoException.class)
     public void testAddDirectorPfcNoEncontrado() {
-        this.pfcService.addDirectors(Long.MAX_VALUE, Lists.newArrayList(1L));
+        this.pfcService.addDirectors(Long.MAX_VALUE, Arrays.asList(1L));
     }
 
     @Test(expected = ProfesorNoEncontradoException.class)
     public void testAddDirectorProfesorNoEncontrado() {
-        this.pfcService.addDirectors(5L, Lists.newArrayList(Long.MAX_VALUE));
+        this.pfcService.addDirectors(5L, Arrays.asList(Long.MAX_VALUE));
     }
 
     @Test(expected = PfcNoEncontradoException.class)

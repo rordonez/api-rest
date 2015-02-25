@@ -1,6 +1,5 @@
 package com.uma.informatica.persistence.services;
 
-import com.google.common.collect.Lists;
 import com.uma.informatica.core.exceptions.*;
 import com.uma.informatica.persistence.models.Alumno;
 import com.uma.informatica.persistence.models.Pfc;
@@ -167,7 +166,7 @@ public class JpaPfcService implements PfcService {
     @Override
     public List<Profesor> addDirectors(long pfcId, List<Long> directores) {
         Pfc pfc = this.findById(pfcId);
-        List<Profesor> profesores = Lists.newArrayList(this.profesorRepository.findAll(directores));
+        List<Profesor> profesores = this.profesorRepository.findAll(directores);
         if(profesores == null || profesores.isEmpty()) {
             throw new ProfesorNoEncontradoException(directores);
         }
