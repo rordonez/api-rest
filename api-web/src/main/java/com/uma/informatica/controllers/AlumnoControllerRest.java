@@ -74,7 +74,7 @@ public class AlumnoControllerRest  {
 
     @RequestMapping (method = RequestMethod.OPTIONS)
     public ResponseEntity<Void> alumnosOptions() {
-        return allows(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.OPTIONS);
+        return allows(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS);
     }
 
 
@@ -116,7 +116,7 @@ public class AlumnoControllerRest  {
     }
 
 
-    @RequestMapping (method = RequestMethod.POST, value = "/{alumnoId}/pfc/{pfcId}")
+    @RequestMapping (method = RequestMethod.PUT, value = "/{alumnoId}/pfc/{pfcId}")
     public ResponseEntity<PfcResource> addPfc(@PathVariable long alumnoId, @PathVariable long pfcId) {
         PfcResource pfcResource = pfcResourceAssembler.toResource(pfcService.addPfcToAlumno(alumnoId, pfcId));
         return new ResponseEntity<>(pfcResource, HttpStatus.CREATED);
@@ -124,7 +124,7 @@ public class AlumnoControllerRest  {
 
     @RequestMapping (method = RequestMethod.OPTIONS, value = "/{alumnoId}/pfc/{pfcId}")
     public ResponseEntity<Void> alumnosPfcOperacionesOptions(@PathVariable long alumnoId, @PathVariable long pfcId) {
-        return allows(HttpMethod.POST, HttpMethod.OPTIONS);
+        return allows(HttpMethod.PUT, HttpMethod.OPTIONS);
     }
 
 }

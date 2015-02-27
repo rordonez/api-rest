@@ -39,15 +39,6 @@ public class Profesor implements Identifiable<Long>, Serializable{
     @Column(name = "titulacion", nullable = false, length = TitulacionEnum.MAX_LONGITUD_TITULACION)
     private TitulacionEnum titulacion;
 
-    @Column(name = "empresa", length = 80)
-    private String empresa;
-
-    @Column(name = "cargo", length = 60)
-    private String cargo;
-
-    @Column(name = "direccionEmpresa", length = 100)
-    private String direccionEmpresa;
-
     @NotNull
     @Column(name = "telefono", nullable = false, length = 12)
     private String telefono;
@@ -60,12 +51,6 @@ public class Profesor implements Identifiable<Long>, Serializable{
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "directores")
     private Collection<Pfc> pfcs;
 
-    @PreRemove
-    private void removePfcsFromProfesores() {
-        for (Pfc pfc : pfcs) {
-
-        }
-    }
 
     public Profesor() {}
 
@@ -86,12 +71,8 @@ public class Profesor implements Identifiable<Long>, Serializable{
         Profesor profesor = (Profesor) o;
 
         if (!apellidos.equals(profesor.apellidos)) return false;
-        if (cargo != null ? !cargo.equals(profesor.cargo) : profesor.cargo != null) return false;
-        if (direccionEmpresa != null ? !direccionEmpresa.equals(profesor.direccionEmpresa) : profesor.direccionEmpresa != null)
-            return false;
         if (!dni.equals(profesor.dni)) return false;
         if (email != null ? !email.equals(profesor.email) : profesor.email != null) return false;
-        if (empresa != null ? !empresa.equals(profesor.empresa) : profesor.empresa != null) return false;
         if (!nombre.equals(profesor.nombre)) return false;
         if (telefono != null ? !telefono.equals(profesor.telefono) : profesor.telefono != null) return false;
         if (titulacion != profesor.titulacion) return false;
@@ -105,9 +86,6 @@ public class Profesor implements Identifiable<Long>, Serializable{
         result = 31 * result + nombre.hashCode();
         result = 31 * result + apellidos.hashCode();
         result = 31 * result + (titulacion != null ? titulacion.hashCode() : 0);
-        result = 31 * result + (empresa != null ? empresa.hashCode() : 0);
-        result = 31 * result + (cargo != null ? cargo.hashCode() : 0);
-        result = 31 * result + (direccionEmpresa != null ? direccionEmpresa.hashCode() : 0);
         result = 31 * result + (telefono != null ? telefono.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
@@ -151,30 +129,6 @@ public class Profesor implements Identifiable<Long>, Serializable{
 
     public void setTitulacion(TitulacionEnum titulacion) {
         this.titulacion = titulacion;
-    }
-
-    public String getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(String empresa) {
-        this.empresa = empresa;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-
-    public String getDireccionEmpresa() {
-        return direccionEmpresa;
-    }
-
-    public void setDireccionEmpresa(String direccionEmpresa) {
-        this.direccionEmpresa = direccionEmpresa;
     }
 
     public String getTelefono() {

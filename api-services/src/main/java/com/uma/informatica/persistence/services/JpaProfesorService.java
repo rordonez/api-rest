@@ -117,26 +117,6 @@ public class JpaProfesorService implements ProfesorService {
         return this.profesorRepository.findByEmail(email);
     }
 
-    @Override
-    public Profesor updateEmpresa(long profesorId, String empresa) {
-        Profesor profesor = this.profesorRepository.findOne(profesorId);
-        if (profesor == null) {
-            throw new ProfesorNoEncontradoException(profesorId);
-        }
-        profesor.setEmpresa(empresa);
-
-        return this.profesorRepository.save(profesor);
-    }
-
-    @Override
-    public Profesor addEmpresa(long profesorId, String empresa) {
-        Profesor profesor = this.profesorRepository.findOne(profesorId);
-        if (profesor == null) {
-            throw new ProfesorNoEncontradoException(profesorId);
-        }
-        profesor.setEmpresa(empresa);
-        return profesor;
-    }
 
     @Override
     public Profesor addTelefono(long profesorId, String telefono) {

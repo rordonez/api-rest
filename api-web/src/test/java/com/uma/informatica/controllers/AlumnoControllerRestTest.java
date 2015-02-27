@@ -331,7 +331,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
     public void addPfc_PfcNoEncontradoException_ShouldRender_404() throws Exception{
         Long alumnoId = 1L;
         Long pfcId = 10L;
-        mockMvc.perform(post("/alumnos/{alumnoId}/pfc/{pfcId}.json", alumnoId, pfcId)
+        mockMvc.perform(put("/alumnos/{alumnoId}/pfc/{pfcId}.json", alumnoId, pfcId)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
@@ -348,7 +348,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
     public void addPfc_ShouldRender200() throws Exception{
         Long alumnoId = 1L;
         Long pfcId = 1L;
-        mockMvc.perform(post("/alumnos/{alumnoId}/pfc/{pfcId}.json", alumnoId, pfcId)
+        mockMvc.perform(put("/alumnos/{alumnoId}/pfc/{pfcId}.json", alumnoId, pfcId)
                 .contentType(IntegrationTestUtil.applicationJsonMediaType)
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 

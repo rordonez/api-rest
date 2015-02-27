@@ -41,10 +41,6 @@ public interface ProfesorService {
 
     Profesor findByEmail(String email);
 
-    Profesor updateEmpresa(long profesorId, String empresa);
-
-    Profesor addEmpresa(long profesorId, String empresa);
-
     Profesor addTelefono(long profesorId, String telefono);
 
     Profesor addEmail(long profesorId, String email);

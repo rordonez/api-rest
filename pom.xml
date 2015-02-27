@@ -170,7 +170,7 @@
                 <version>3.3.2</version>
             </dependency>
 
-            
+
             <!-- LogBack dependencies -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>

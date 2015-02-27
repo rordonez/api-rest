@@ -4,6 +4,7 @@ import com.uma.informatica.controllers.assemblers.ProfesorResourceAssembler;
 import com.uma.informatica.controllers.resources.ProfesorResource;
 import com.uma.informatica.persistence.models.Profesor;
 import com.uma.informatica.persistence.services.ProfesorService;
+import com.wordnik.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,6 +27,7 @@ import static com.uma.informatica.controllers.utils.ControllerUtils.allows;
  */
 @ExposesResourceFor(Profesor.class)
 @RestController
+@Api(value = "profesores", description = "Api para profesores")
 @RequestMapping(value = "/profesores")
 public class ProfesorControllerRest {
 
