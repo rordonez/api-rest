@@ -32,6 +32,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class DocWebAppContext extends WebMvcConfigurerAdapter {
 
 
+    /**
+     *
+     * Añade manejadores para servir recursos estáticos
+     *
+     * @param registry
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**").addResourceLocations("/css/");
@@ -43,6 +49,9 @@ public class DocWebAppContext extends WebMvcConfigurerAdapter {
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
+
+
+    /** CONFIGURACION SWAGGER **/
 
     private SpringSwaggerConfig springSwaggerConfig;
 
