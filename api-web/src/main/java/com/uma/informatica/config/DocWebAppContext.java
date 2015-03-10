@@ -4,7 +4,6 @@ import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 import com.wordnik.swagger.model.ApiInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -52,32 +51,19 @@ public class DocWebAppContext extends WebMvcConfigurerAdapter {
 
 
     /** CONFIGURACION SWAGGER **/
-
-    private SpringSwaggerConfig springSwaggerConfig;
-
-    @Autowired
-    public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
-        this.springSwaggerConfig = springSwaggerConfig;
-    }
-
-    @Bean //Don't forget the @Bean annotation
-    public SwaggerSpringMvcPlugin customImplementation(){
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
+    @Bean
+    public SwaggerSpringMvcPlugin customImplementation(SpringSwaggerConfig springSwaggerConfig){
+        return new SwaggerSpringMvcPlugin(springSwaggerConfig)
                 .ignoredParameterTypes(Pageable.class, PagedResourcesAssembler.class)
-                .apiInfo(apiInfo());
-//                .includePatterns(".*pet.*");
+                .apiInfo(new ApiInfo(
+                        "Desarrollo de una API Restful",
+                        "Página para documentar la API REST",
+                        null,
+                        null,
+                        null,
+                        null
+                ));
     }
 
-    private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
-                "Desarrollo de una API Restful",
-                "Página para documentar la API REST",
-                null,
-                null,
-                null,
-                null
-        );
-        return apiInfo;
-    }
 
 }

@@ -92,14 +92,6 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
     }
 
 
-    @Test
-    public void findByDniTest() {
-        Alumno alumno = alumnoService.findByDni("00000000A");
-        assertThat(alumno, not(nullValue()));
-        alumno = alumnoService.findByDni(RandomStringUtils.random(8));
-        assertThat(alumno, nullValue());
-    }
-
     @Test(expected = AlumnoNoEncontradoException.class)
     public void testSearchWithoutResults() {
         Page<Alumno> alumnos = alumnoService.search("325353234A","asd","sdg", new PageRequest(0,10));
@@ -138,13 +130,13 @@ public class AlumnoServiceTest extends AbstractTransactionalJUnit4SpringContextT
         assertThat(alumno,  equalTo(alumnoService.findByDni("12345678A")));
     }
 
-    @Test
+    @Test(expected = AlumnoNoEncontradoException.class)
     public void removeTest() {
-        Alumno alumno = alumnoService.findByDni("12345678A");
+        Alumno alumno = alumnoService.findById(1L);
         if (alumno != null) {
             alumnoService.deleteAlumno(alumno.getId());
         }
-        alumno = alumnoService.findByDni("12345678A");
+        alumno = alumnoService.findById(1L);
         assertThat(alumno, nullValue());
 
     }

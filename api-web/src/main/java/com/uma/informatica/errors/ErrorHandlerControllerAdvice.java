@@ -13,12 +13,13 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice(annotations = RestController.class)
-public class ErrorHandlerControllerAdvice {
+public class ErrorHandlerControllerAdvice extends ResponseEntityExceptionHandler {
 	
 	private final MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error+json;charset=UTF-8");
 	
