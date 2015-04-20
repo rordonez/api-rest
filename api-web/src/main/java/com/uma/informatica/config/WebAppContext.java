@@ -1,5 +1,6 @@
 package com.uma.informatica.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,10 +12,11 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.config.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -34,6 +36,22 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
 
     /**
      *
+     * Añade manejadores para servir recursos estáticos
+     *
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    /**
+     *
      * Configuración necesaria para la Negociación de Contenido. Sólo se tiene en cuenta el sufijo en la URI de la
      * petición al recurso
      *
@@ -44,7 +62,8 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
         configurer.favorPathExtension(true).
                 ignoreAcceptHeader(false).
                 useJaf(false).
-                defaultContentType(MediaType.APPLICATION_JSON).
+                defaultContentType(MediaType.TEXT_HTML).
+                mediaType("html", MediaType.TEXT_HTML).
                 mediaType("xml", MediaType.APPLICATION_XML).
                 mediaType("hal", MediaTypes.HAL_JSON).
                 mediaType("json", MediaType.APPLICATION_JSON);
@@ -61,10 +80,14 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        builder.indentOutput(true)
-                .failOnEmptyBeans(false);
+        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd")).failOnEmptyBeans(false);
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
         converters.add(new MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(true).build()));
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 
 }
