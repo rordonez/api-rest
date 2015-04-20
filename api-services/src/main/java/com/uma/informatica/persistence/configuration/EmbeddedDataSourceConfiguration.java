@@ -22,7 +22,7 @@ public class EmbeddedDataSourceConfiguration {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setDatabase(Database.H2);
         adapter.setGenerateDdl(true);
-        adapter.setShowSql(true);
+        adapter.setShowSql(false);
         return adapter;
     }
 
