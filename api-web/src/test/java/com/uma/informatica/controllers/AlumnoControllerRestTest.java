@@ -48,7 +48,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
     @Test
     public void getAll_ShouldRender_200() throws Exception {
-        mockMvc.perform(get("/alumnos.json")
+        mockMvc.perform(delete("/alumnos.json")
                 .accept(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(status().isOk())
