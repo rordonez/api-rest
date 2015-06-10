@@ -50,9 +50,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.content", hasSize(5)))
-                .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs{?page,size,sort}")));
+                .andExpect(jsonPath("$.links", hasSize(1)));
     }
 
     @Test
@@ -64,9 +62,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
 
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/pfcs{?page,size,sort}")));
+                .andExpect(jsonPath("$.links", hasSize(1)));
 
     }
 
