@@ -55,11 +55,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(10)))
 
-                .andExpect(jsonPath("$.links", hasSize(2)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos{?page,size,sort}")))
-                .andExpect(jsonPath("$.links[1].rel", is(Link.REL_NEXT)))
-                .andExpect(jsonPath("$.links[1].href", endsWith("/alumnos?page=1&size=10{&sort}")))
+                .andExpect(jsonPath("$.links", hasSize(4)))
 
                 .andExpect(jsonPath("$.page.totalElements", is(13)))
                 .andExpect(jsonPath("$.page.totalPages", is(2)))
@@ -84,11 +80,8 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(3)))
 
-                .andExpect(jsonPath("$.links", hasSize(2)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/alumnos{?page,size,sort}")))
-                .andExpect(jsonPath("$.links[1].rel", is(Link.REL_PREVIOUS)))
-                .andExpect(jsonPath("$.links[1].href", endsWith("/alumnos?page=0&size=10{&sort}")))
+                .andExpect(jsonPath("$.links", hasSize(4)))
+
                 .andExpect(jsonPath("$.page.totalElements", is(13)));
     }
 
@@ -119,7 +112,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(IntegrationTestUtil.applicationJsonMediaType))
                 .andExpect(jsonPath("$.content", hasSize(10)))
-                .andExpect(jsonPath("$.links", hasSize(2)))
+                .andExpect(jsonPath("$.links", hasSize(4)))
 
                 .andExpect(jsonPath("$.page.totalElements", is(12)));
     }
@@ -163,7 +156,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test

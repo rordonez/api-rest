@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by rafa on 17/02/15.
  */
-@Profile("test")
+@Profile({"test", "production"})
 @RestController
 public class RootController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "/")
     public ResponseEntity<Resource<APILinks>> getApiLinks() {
         Resource<APILinks> links = new Resource<APILinks>(new APILinks());
 

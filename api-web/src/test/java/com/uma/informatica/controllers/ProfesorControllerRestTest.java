@@ -72,8 +72,6 @@ public class ProfesorControllerRestTest extends AbstractTransactionalJUnit4Sprin
                 .andExpect(jsonPath("$.content", hasSize(3)))
 
                 .andExpect(jsonPath("$.links", hasSize(1)))
-                .andExpect(jsonPath("$.links[0].rel", is(Link.REL_SELF)))
-                .andExpect(jsonPath("$.links[0].href", endsWith("/profesores{?page,size,sort}")))
 
                 .andExpect(jsonPath("$.page.totalElements", is(3)))
                 .andExpect(jsonPath("$.page.totalPages", is(1)))

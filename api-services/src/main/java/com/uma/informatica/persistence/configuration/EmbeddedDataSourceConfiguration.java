@@ -26,10 +26,6 @@ public class EmbeddedDataSourceConfiguration {
         return adapter;
     }
 
-    /**
-     * You can access this H2 database at <a href = "http://localhost:8080/admin/console">the H2 administration
-     * console</a>.
-     */
     @Bean
     public DataSource dataSource() {
 
@@ -42,5 +38,4 @@ public class EmbeddedDataSourceConfiguration {
                 .build();
 
     }
-
 }

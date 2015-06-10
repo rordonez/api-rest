@@ -196,15 +196,17 @@
     </dependencies>
 
     <repositories>
+        <!-- repositorio JBoss -->
+        <repository>
+            <id>JBoss repository</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
 
+        <!-- repositorios Spring -->
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>http://repo.spring.io/libs-milestone</url>
-        </repository>
-        <repository>
-            <id>JBoss repository</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>spring-repo</id>
@@ -216,17 +218,6 @@
             <url>http://repo.spring.io/libs-release</url>
         </repository>
         <repository>
-            <id>org.springframework.maven.release</id>
-            <name>Spring Maven Release Repository</name>
-            <url>http://maven.springframework.org/release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
             <url>http://repo.spring.io/libs-snapshot</url>
@@ -234,6 +225,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+
         <!-- Swagger Mvc Repository -->
         <repository>
             <id>jcenter-release</id>
