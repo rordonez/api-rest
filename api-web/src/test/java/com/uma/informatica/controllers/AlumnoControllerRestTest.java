@@ -156,7 +156,7 @@ public class AlumnoControllerRestTest extends AbstractTransactionalJUnit4SpringC
 
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test

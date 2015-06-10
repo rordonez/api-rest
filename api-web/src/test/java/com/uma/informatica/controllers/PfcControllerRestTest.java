@@ -126,8 +126,7 @@ public class PfcControllerRestTest extends AbstractTransactionalJUnit4SpringCont
                 .andExpect(content().contentType(IntegrationTestUtil.vndErrorMediaType))
                 .andExpect(content().encoding("UTF-8"))
 
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].message", is("Parámetro: departamento no puede ser null")));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test
